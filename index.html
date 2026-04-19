@@ -16,7 +16,7 @@
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.5/dist/cdn.min.js"></script>
   <!-- Uploadcare for direct file uploads (free tier). Swap public key before deploy. -->
   <script>
-    UPLOADCARE_PUBLIC_KEY = '3da0f93ac41b1e438332';
+    UPLOADCARE_PUBLIC_KEY = 'YOUR_UPLOADCARE_PUBLIC_KEY';
     UPLOADCARE_LOCALE = 'en';
   </script>
   <script src="https://ucarecdn.com/libs/widget/3.x/uploadcare.full.min.js" charset="utf-8"></script>
@@ -37,9 +37,8 @@
   <!-- Header -->
   <header class="masthead">
     <div class="masthead__inner">
-      <a class="masthead__brand" href="#">
-        <span class="brand-mark">W&amp;</span>
-        <span class="brand-wordmark">The Wonder Agency</span>
+      <a class="masthead__brand" href="#" aria-label="The Wonder Agency">
+        <img src="wonder-logo.png" alt="The Wonder Agency" class="brand-mark-img" />
       </a>
       <div class="masthead__meta" x-show="currentPhase > 0">
         <span class="masthead__save-indicator" x-text="saveIndicator"></span>
@@ -66,6 +65,7 @@
          ========================================================= -->
     <section class="phase phase--welcome" x-show="currentPhase === 0" x-transition.opacity.duration.600ms>
       <div class="welcome">
+        <img src="wonder-logo.png" alt="The Wonder Agency" class="welcome__logo" />
         <p class="eyebrow">An invitation to begin</p>
         <h1 class="welcome__title">
           Let's build<br />
