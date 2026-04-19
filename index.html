@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Project intake — The Wonder Agency" />
+  <title>Project intake · The Wonder Agency</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500;600&family=Julius+Sans+One&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- Alpine.js for reactive show/hide and form state -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.5/dist/cdn.min.js"></script>
+  <!-- Uploadcare for direct file uploads (free tier). Swap public key before deploy. -->
+  <script>
+    UPLOADCARE_PUBLIC_KEY = 'YOUR_UPLOADCARE_PUBLIC_KEY';
+    UPLOADCARE_LOCALE = 'en';
+  </script>
+  <script src="https://ucarecdn.com/libs/widget/3.x/uploadcare.full.min.js" charset="utf-8"></script>
+</head>
+<body x-data="wonderIntake()" x-init="init()" x-cloak>
+
+  <!-- Resume banner -->
+  <div class="resume-banner" x-show="hasDraft && !dismissedResume && currentPhase === 0" x-transition>
+    <div class="resume-banner__inner">
+      <span class="resume-banner__text">You have a draft in progress. Pick up where you left off?</span>
+      <div class="resume-banner__actions">
+        <button class="btn btn--ghost" @click="startFresh()">Start fresh</button>
+        <button class="btn btn--solid" @click="resumeDraft()">Resume →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="masthead">
+    <div class="masthead__inner">
+      <a class="masthead__brand" href="#">
+        <span class="brand-mark">W&amp;</span>
+        <span class="brand-wordmark">The Wonder Agency</span>
+      </a>
+      <div class="masthead__meta" x-show="currentPhase > 0">
+        <span class="masthead__save-indicator" x-text="saveIndicator"></span>
+      </div>
+    </div>
+    <!-- Progress bar -->
+    <div class="progress" x-show="currentPhase > 0">
+      <div class="progress__track">
+        <div class="progress__fill" :style="`width: ${progressPercent}%`"></div>
+      </div>
+      <div class="progress__meta">
+        <span class="progress__phase" x-text="currentPhaseLabel"></span>
+        <span class="progress__count">
+          <span x-text="Math.round(progressPercent)"></span>% complete
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <main class="shell">
+
+    <!-- =========================================================
+         PHASE 0 · Welcome
+         ========================================================= -->
+    <section class="phase phase--welcome" x-show="currentPhase === 0" x-transition.opacity.duration.600ms>
+      <div class="welcome">
+        <p class="eyebrow">An invitation to begin</p>
+        <h1 class="welcome__title">
+          Let's build<br />
+          <em>something</em> wonderful.
+        </h1>
+        <div class="welcome__divider"></div>
+        <p class="welcome__lede">
+          This is where your website starts. A considered set of questions that tell us who you are, who you're speaking to, and what we're building together. Fill it in at your own pace — your progress is saved as you go.
+        </p>
+        <dl class="welcome__facts">
+          <div class="fact">
+            <dt>Time needed</dt>
+            <dd>15–25 minutes</dd>
+          </div>
+          <div class="fact">
+            <dt>Saves as you type</dt>
+            <dd>Close the tab whenever</dd>
+          </div>
+          <div class="fact">
+            <dt>What you'll need</dt>
+            <dd>Logo, photos, a sense of your brand</dd>
+          </div>
+        </dl>
+        <button class="btn btn--solid btn--large" @click="advance()">
+          Begin <span class="btn__arrow">→</span>
+        </button>
+        <p class="welcome__footnote">
+          Nothing is submitted until the final step. You're free to revisit anything.
+        </p>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         PHASE 1 · About you
+         ========================================================= -->
+    <section class="phase" x-show="currentPhase === 1" x-transition.opacity.duration.400ms>
+      <header class="phase__header">
+        <span class="phase__number">01</span>
+        <div class="phase__titleblock">
+          <p class="phase__kicker">Phase one of ten</p>
+          <h2 class="phase__title">About <em>you</em></h2>
+          <p class="phase__lede">The basics — who you are and how we'll reach you during the build.</p>
+        </div>
+      </header>
+
+      <div class="fields">
+        <div class="field">
+          <label class="field__label" for="contactName">Your name</label>
+          <input type="text" id="contactName" class="field__input" x-model="data.contactName" placeholder="First and last" />
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="contactRole">Your role at the business</label>
+          <input type="text" id="contactRole" class="field__input" x-model="data.contactRole" placeholder="Founder, owner, marketing lead…" />
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label class="field__label" for="contactEmail">Email</label>
+            <input type="email" id="contactEmail" class="field__input" x-model="data.contactEmail" placeholder="name@business.com" />
+          </div>
+          <div class="field">
+            <label class="field__label" for="contactPhone">Phone</label>
+            <input type="tel" id="contactPhone" class="field__input" x-model="data.contactPhone" placeholder="Optional" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field__label">Who else should we keep in the loop?</label>
+          <textarea class="field__input field__input--textarea" x-model="data.additionalContacts" placeholder="Names and emails of anyone else who'll be reviewing or approving work. Optional." rows="3"></textarea>
+        </div>
+      </div>
+
+      <nav class="phase__nav">
+        <button class="btn btn--ghost" @click="goBack()">← Back</button>
+        <button class="btn btn--solid" @click="advance()" :disabled="!phase1Valid">
+          Continue <span class="btn__arrow">→</span>
+        </button>
+      </nav>
+    </section>
+
+    <!-- =========================================================
+         PHASE 2 · Your business
+         ========================================================= -->
+    <section class="phase" x-show="currentPhase === 2" x-transition.opacity.duration.400ms>
+      <header class="phase__header">
+        <span class="phase__number">02</span>
+        <div class="phase__titleblock">
+          <p class="phase__kicker">Phase two of ten</p>
+          <h2 class="phase__title">Your <em>business</em></h2>
+          <p class="phase__lede">Tell us what you do and who you do it for.</p>
+        </div>
+      </header>
+
+      <div class="fields">
+        <div class="field">
+          <label class="field__label" for="businessName">Business name</label>
+          <input type="text" id="businessName" class="field__input" x-model="data.businessName" placeholder="The name that should appear on the site" />
+        </div>
+
+        <div class="field">
+          <label class="field__label">What type of business?</label>
+          <p class="field__hint">This helps us ask the right follow-up questions.</p>
+          <div class="pills">
+            <template x-for="option in industryOptions" :key="option.value">
+              <button
+                type="button"
+                class="pill"
+                :class="{ 'pill--selected': data.industry === option.value }"
+                @click="data.industry = option.value"
+                x-text="option.label">
+              </button>
+            </template>
+          </div>
+        </div>
+
+        <div class="field" x-show="data.industry === 'other'" x-transition>
+          <label class="field__label" for="industryOther">Tell us more</label>
+          <input type="text" id="industryOther" class="field__input" x-model="data.industryOther" placeholder="How would you describe what you do?" />
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="field">
+          <label class="field__label" for="pitch">Your elevator pitch</label>
+          <p class="field__hint">One sentence. If someone asks what you do, what's the answer?</p>
+          <textarea id="pitch" class="field__input field__input--textarea" x-model="data.pitch" rows="2" placeholder="We're a…"></textarea>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="description">A fuller description</label>
+          <p class="field__hint">A paragraph or two. What you do, how you do it, why it matters.</p>
+          <textarea id="description" class="field__input field__input--textarea" x-model="data.description" rows="5"></textarea>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="usps">What makes you different?</label>
+          <p class="field__hint">Three to five points. What do you do better, or differently, than anyone else in your world?</p>
+          <textarea id="usps" class="field__input field__input--textarea" x-model="data.usps" rows="5" placeholder="• …&#10;• …&#10;• …"></textarea>
+        </div>
+      </div>
+
+      <nav class="phase__nav">
+        <button class="btn btn--ghost" @click="goBack()">← Back</button>
+        <button class="btn btn--solid" @click="advance()" :disabled="!phase2Valid">
+          Continue <span class="btn__arrow">→</span>
+        </button>
+      </nav>
+    </section>
+
+    <!-- =========================================================
+         PHASE 3 · Tone & feel
+         ========================================================= -->
+    <section class="phase" x-show="currentPhase === 3" x-transition.opacity.duration.400ms>
+      <header class="phase__header">
+        <span class="phase__number">03</span>
+        <div class="phase__titleblock">
+          <p class="phase__kicker">Phase three of ten</p>
+          <h2 class="phase__title">Tone &amp; <em>feel</em></h2>
+          <p class="phase__lede">How should your brand sound and feel to someone who's just landed on your site?</p>
+        </div>
+      </header>
+
+      <div class="fields">
+        <div class="field">
+          <label class="field__label">Where do you sit on each of these?</label>
+          <p class="field__hint">Slide toward whichever end feels more like you.</p>
+          <div class="sliders">
+            <template x-for="slider in toneSliders" :key="slider.key">
+              <div class="slider">
+                <div class="slider__labels">
+                  <span class="slider__label-left" x-text="slider.left"></span>
+                  <span class="slider__label-right" x-text="slider.right"></span>
+                </div>
+                <input
+                  type="range"
+                  min="1" max="5" step="1"
+                  class="slider__input"
+                  :value="data.tone[slider.key]"
+                  @input="data.tone[slider.key] = parseInt($event.target.value)" />
+                <div class="slider__ticks">
+                  <span></span><span></span><span></span><span></span><span></span>
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="field">
+          <label class="field__label" for="brandFeeling">Describe the feeling of your brand in 3–5 words</label>
+          <p class="field__hint">Warm, confident, mischievous, grown-up, unpretentious — whatever's true.</p>
+          <input type="text" id="brandFeeling" class="field__input" x-model="data.brandFeeling" placeholder="e.g. Warm, grounded, quietly confident" />
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="voiceAvoid">Anything you <em>don't</em> want to sound like?</label>
+          <p class="field__hint">Optional. Sometimes it's easier to say what you're not.</p>
+          <textarea id="voiceAvoid" class="field__input field__input--textarea" x-model="data.voiceAvoid" rows="3" placeholder="e.g. corporate, salesy, try-hard"></textarea>
+        </div>
+      </div>
+
+      <nav class="phase__nav">
+        <button class="btn btn--ghost" @click="goBack()">← Back</button>
+        <button class="btn btn--solid" @click="advance()">
+          Continue <span class="btn__arrow">→</span>
+        </button>
+      </nav>
+    </section>
+
+    <!-- Placeholder for remaining phases -->
+    <section class="phase" x-show="currentPhase >= 4" x-transition.opacity.duration.400ms>
+      <header class="phase__header">
+        <div class="phase__titleblock">
+          <h2 class="phase__title">Coming next</h2>
+          <p class="phase__lede">Phases 4–10 will be built in the next pass: pages needed, content per page, brand assets, audience &amp; photography, restaurant-specific sections (if applicable), contact &amp; location, technical &amp; access, timeline &amp; budget, and review.</p>
+        </div>
+      </header>
+      <nav class="phase__nav">
+        <button class="btn btn--ghost" @click="goBack()">← Back</button>
+      </nav>
+    </section>
+
+  </main>
+
+  <footer class="footcolumn" x-show="currentPhase > 0">
+    <div class="footcolumn__inner">
+      <span class="footcolumn__brand">The Wonder Agency</span>
+      <span class="footcolumn__divider">·</span>
+      <span class="footcolumn__note">Your answers are saved to this browser only until submission.</span>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
