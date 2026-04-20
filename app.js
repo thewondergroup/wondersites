@@ -2,7 +2,7 @@
    Wonder Agency · Project intake — app logic
    ========================================================= */
 
-const STORAGE_KEY = 'wonder_intake_v3';
+const STORAGE_KEY = 'wonder_intake_v4';
 const SAVE_DEBOUNCE_MS = 400;
 
 /* -----------------------------------------------------------
@@ -58,7 +58,7 @@ function wonderIntake() {
       customPages: '',
 
       // Phase 5 — Copywriting preference + per-page content
-      copywritingPreference: 'wonder', // 'client' | 'wonder'
+      copywritingPreference: '', // 'client' | 'wonder'
       pageContent: {}, // keyed by page slug, value = string
 
       // Phase 6 — Brand & visuals
@@ -356,9 +356,11 @@ function wonderIntake() {
         }
 
         case this.phaseNumbers.pages: {
-          // Home is always pre-selected. Any selection beyond that = complete.
-          // Just home alone still counts as valid ("landing page only" build).
-          if (d.pagesNeeded.length === 0) return 'empty';
+          // Home is always pre-selected by default.
+          // Empty = only Home (no user action taken)
+          // Complete = any selection beyond Home
+          const nonHomePages = d.pagesNeeded.filter(p => p !== 'home');
+          if (nonHomePages.length === 0) return 'empty';
           return 'complete';
         }
 
