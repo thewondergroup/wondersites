@@ -2,7 +2,7 @@
    Wonder Agency · Project intake — app logic
    ========================================================= */
 
-const STORAGE_KEY = 'wonder_intake_v2';
+const STORAGE_KEY = 'wonder_intake_v3';
 const SAVE_DEBOUNCE_MS = 400;
 
 /* -----------------------------------------------------------
