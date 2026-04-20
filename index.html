@@ -103,39 +103,54 @@
          ========================================================= -->
     <section class="phase" x-show="currentPhase === 1" x-transition.opacity.duration.400ms>
       <header class="phase__header">
-        <span class="phase__number">01</span>
         <div class="phase__titleblock">
-          <p class="phase__kicker">Phase one of ten</p>
+          <p class="phase__kicker">
+            <span class="phase__kicker-label">Phase 01 / <span x-text="String(totalPhases).padStart(2, '0')"></span></span>
+          </p>
           <h2 class="phase__title">About <em>you</em></h2>
           <p class="phase__lede">The basics — who you are and how we'll reach you during the build.</p>
         </div>
       </header>
 
       <div class="fields">
-        <div class="field">
-          <label class="field__label" for="contactName">Your name</label>
-          <input type="text" id="contactName" class="field__input" x-model="data.contactName" placeholder="First and last" />
-        </div>
+        <div class="field-group">
+          <h3 class="field-group__title">
+            <span class="field-group__number">1</span>
+            Who we're speaking to
+          </h3>
 
-        <div class="field">
-          <label class="field__label" for="contactRole">Your role at the business</label>
-          <input type="text" id="contactRole" class="field__input" x-model="data.contactRole" placeholder="Founder, owner, marketing lead…" />
-        </div>
-
-        <div class="field-row">
           <div class="field">
-            <label class="field__label" for="contactEmail">Email</label>
-            <input type="email" id="contactEmail" class="field__input" x-model="data.contactEmail" placeholder="name@business.com" />
+            <label class="field__label" for="contactName">Your name</label>
+            <input type="text" id="contactName" class="field__input" x-model="data.contactName" placeholder="First and last" />
           </div>
+
           <div class="field">
-            <label class="field__label" for="contactPhone">Phone</label>
-            <input type="tel" id="contactPhone" class="field__input" x-model="data.contactPhone" placeholder="Optional" />
+            <label class="field__label" for="contactRole">Your role at the business</label>
+            <input type="text" id="contactRole" class="field__input" x-model="data.contactRole" placeholder="Founder, owner, marketing lead…" />
           </div>
         </div>
 
-        <div class="field">
-          <label class="field__label">Who else should we keep in the loop?</label>
-          <textarea class="field__input field__input--textarea" x-model="data.additionalContacts" placeholder="Names and emails of anyone else who'll be reviewing or approving work. Optional." rows="3"></textarea>
+        <div class="field-group">
+          <h3 class="field-group__title">
+            <span class="field-group__number">2</span>
+            How we'll reach you
+          </h3>
+
+          <div class="field-row">
+            <div class="field">
+              <label class="field__label" for="contactEmail">Email</label>
+              <input type="email" id="contactEmail" class="field__input" x-model="data.contactEmail" placeholder="name@business.com" />
+            </div>
+            <div class="field">
+              <label class="field__label" for="contactPhone">Phone</label>
+              <input type="tel" id="contactPhone" class="field__input" x-model="data.contactPhone" placeholder="Optional" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="field__label">Who else should we keep in the loop?</label>
+            <textarea class="field__input field__input--textarea" x-model="data.additionalContacts" placeholder="Names and emails of anyone else who'll be reviewing or approving work. Optional." rows="3"></textarea>
+          </div>
         </div>
       </div>
 
@@ -152,59 +167,72 @@
          ========================================================= -->
     <section class="phase" x-show="currentPhase === 2" x-transition.opacity.duration.400ms>
       <header class="phase__header">
-        <span class="phase__number">02</span>
         <div class="phase__titleblock">
-          <p class="phase__kicker">Phase two of ten</p>
+          <p class="phase__kicker">
+            <span class="phase__kicker-label">Phase 02 / <span x-text="String(totalPhases).padStart(2, '0')"></span></span>
+          </p>
           <h2 class="phase__title">Your <em>business</em></h2>
           <p class="phase__lede">Tell us what you do and who you do it for.</p>
         </div>
       </header>
 
       <div class="fields">
-        <div class="field">
-          <label class="field__label" for="businessName">Business name</label>
-          <input type="text" id="businessName" class="field__input" x-model="data.businessName" placeholder="The name that should appear on the site" />
-        </div>
+        <div class="field-group">
+          <h3 class="field-group__title">
+            <span class="field-group__number">1</span>
+            What you do
+          </h3>
 
-        <div class="field">
-          <label class="field__label">What type of business?</label>
-          <p class="field__hint">This helps us ask the right follow-up questions.</p>
-          <div class="pills">
-            <template x-for="option in industryOptions" :key="option.value">
-              <button
-                type="button"
-                class="pill"
-                :class="{ 'pill--selected': data.industry === option.value }"
-                @click="data.industry = option.value"
-                x-text="option.label">
-              </button>
-            </template>
+          <div class="field">
+            <label class="field__label" for="businessName">Business name</label>
+            <input type="text" id="businessName" class="field__input" x-model="data.businessName" placeholder="The name that should appear on the site" />
+          </div>
+
+          <div class="field">
+            <label class="field__label">What type of business?</label>
+            <p class="field__hint">This helps us ask the right follow-up questions.</p>
+            <div class="pills">
+              <template x-for="option in industryOptions" :key="option.value">
+                <button
+                  type="button"
+                  class="pill"
+                  :class="{ 'pill--selected': data.industry === option.value }"
+                  @click="data.industry = option.value"
+                  x-text="option.label">
+                </button>
+              </template>
+            </div>
+          </div>
+
+          <div class="field" x-show="data.industry === 'other'" x-transition>
+            <label class="field__label" for="industryOther">Tell us more</label>
+            <input type="text" id="industryOther" class="field__input" x-model="data.industryOther" placeholder="How would you describe what you do?" />
           </div>
         </div>
 
-        <div class="field" x-show="data.industry === 'other'" x-transition>
-          <label class="field__label" for="industryOther">Tell us more</label>
-          <input type="text" id="industryOther" class="field__input" x-model="data.industryOther" placeholder="How would you describe what you do?" />
-        </div>
+        <div class="field-group">
+          <h3 class="field-group__title">
+            <span class="field-group__number">2</span>
+            How you describe it
+          </h3>
 
-        <div class="divider"></div>
+          <div class="field">
+            <label class="field__label" for="pitch">Your elevator pitch</label>
+            <p class="field__hint">One sentence. If someone asks what you do, what's the answer?</p>
+            <textarea id="pitch" class="field__input field__input--textarea" x-model="data.pitch" rows="2" placeholder="We're a…"></textarea>
+          </div>
 
-        <div class="field">
-          <label class="field__label" for="pitch">Your elevator pitch</label>
-          <p class="field__hint">One sentence. If someone asks what you do, what's the answer?</p>
-          <textarea id="pitch" class="field__input field__input--textarea" x-model="data.pitch" rows="2" placeholder="We're a…"></textarea>
-        </div>
+          <div class="field">
+            <label class="field__label" for="description">A fuller description</label>
+            <p class="field__hint">A paragraph or two. What you do, how you do it, why it matters.</p>
+            <textarea id="description" class="field__input field__input--textarea" x-model="data.description" rows="5"></textarea>
+          </div>
 
-        <div class="field">
-          <label class="field__label" for="description">A fuller description</label>
-          <p class="field__hint">A paragraph or two. What you do, how you do it, why it matters.</p>
-          <textarea id="description" class="field__input field__input--textarea" x-model="data.description" rows="5"></textarea>
-        </div>
-
-        <div class="field">
-          <label class="field__label" for="usps">What makes you different?</label>
-          <p class="field__hint">Three to five points. What do you do better, or differently, than anyone else in your world?</p>
-          <textarea id="usps" class="field__input field__input--textarea" x-model="data.usps" rows="5" placeholder="• …&#10;• …&#10;• …"></textarea>
+          <div class="field">
+            <label class="field__label" for="usps">What makes you different?</label>
+            <p class="field__hint">Three to five points. What do you do better, or differently, than anyone else in your world?</p>
+            <textarea id="usps" class="field__input field__input--textarea" x-model="data.usps" rows="5" placeholder="• …&#10;• …&#10;• …"></textarea>
+          </div>
         </div>
       </div>
 
@@ -221,28 +249,34 @@
          ========================================================= -->
     <section class="phase" x-show="currentPhase === 3" x-transition.opacity.duration.400ms>
       <header class="phase__header">
-        <span class="phase__number">03</span>
         <div class="phase__titleblock">
-          <p class="phase__kicker">Phase three of ten</p>
+          <p class="phase__kicker">
+            <span class="phase__kicker-label">Phase 03 / <span x-text="String(totalPhases).padStart(2, '0')"></span></span>
+          </p>
           <h2 class="phase__title">Tone &amp; <em>feel</em></h2>
           <p class="phase__lede">How should your brand sound and feel to someone who's just landed on your site?</p>
         </div>
       </header>
 
       <div class="fields">
-        <div class="field">
-          <label class="field__label">Where do you sit on each of these?</label>
-          <p class="field__hint">Slide toward whichever end feels more like you.</p>
-          <div class="sliders">
-            <template x-for="slider in toneSliders" :key="slider.key">
-              <div class="slider">
-                <div class="slider__labels">
-                  <span class="slider__label-left" x-text="slider.left"></span>
-                  <span class="slider__label-right" x-text="slider.right"></span>
-                </div>
-                <input
-                  type="range"
-                  min="1" max="5" step="1"
+        <div class="field-group">
+          <h3 class="field-group__title">
+            <span class="field-group__number">1</span>
+            Where you sit on the dial
+          </h3>
+
+          <div class="field">
+            <p class="field__hint">Slide toward whichever end feels more like you.</p>
+            <div class="sliders">
+              <template x-for="slider in toneSliders" :key="slider.key">
+                <div class="slider">
+                  <div class="slider__labels">
+                    <span class="slider__label-left" x-text="slider.left"></span>
+                    <span class="slider__label-right" x-text="slider.right"></span>
+                  </div>
+                  <input
+                    type="range"
+                    min="1" max="5" step="1"
                   class="slider__input"
                   :value="data.tone[slider.key]"
                   @input="data.tone[slider.key] = parseInt($event.target.value)" />
@@ -252,20 +286,26 @@
               </div>
             </template>
           </div>
+          </div>
         </div>
 
-        <div class="divider"></div>
+        <div class="field-group">
+          <h3 class="field-group__title">
+            <span class="field-group__number">2</span>
+            In your own words
+          </h3>
 
-        <div class="field">
-          <label class="field__label" for="brandFeeling">Describe the feeling of your brand in 3–5 words</label>
-          <p class="field__hint">Warm, confident, mischievous, grown-up, unpretentious — whatever's true.</p>
-          <input type="text" id="brandFeeling" class="field__input" x-model="data.brandFeeling" placeholder="e.g. Warm, grounded, quietly confident" />
-        </div>
+          <div class="field">
+            <label class="field__label" for="brandFeeling">Describe the feeling of your brand in 3–5 words</label>
+            <p class="field__hint">Warm, confident, mischievous, grown-up, unpretentious — whatever's true.</p>
+            <input type="text" id="brandFeeling" class="field__input" x-model="data.brandFeeling" placeholder="e.g. Warm, grounded, quietly confident" />
+          </div>
 
-        <div class="field">
-          <label class="field__label" for="voiceAvoid">Anything you <em>don't</em> want to sound like?</label>
-          <p class="field__hint">Optional. Sometimes it's easier to say what you're not.</p>
-          <textarea id="voiceAvoid" class="field__input field__input--textarea" x-model="data.voiceAvoid" rows="3" placeholder="e.g. corporate, salesy, try-hard"></textarea>
+          <div class="field">
+            <label class="field__label" for="voiceAvoid">Anything you <em>don't</em> want to sound like?</label>
+            <p class="field__hint">Optional. Sometimes it's easier to say what you're not.</p>
+            <textarea id="voiceAvoid" class="field__input field__input--textarea" x-model="data.voiceAvoid" rows="3" placeholder="e.g. corporate, salesy, try-hard"></textarea>
+          </div>
         </div>
       </div>
 
@@ -277,17 +317,828 @@
       </nav>
     </section>
 
-    <!-- Placeholder for remaining phases -->
-    <section class="phase" x-show="currentPhase >= 4" x-transition.opacity.duration.400ms>
+    <!-- =========================================================
+         PHASE 4 · Pages needed
+         ========================================================= -->
+    <section class="phase" x-show="currentPhase === phaseNumbers.pages" x-transition.opacity.duration.400ms>
       <header class="phase__header">
         <div class="phase__titleblock">
-          <h2 class="phase__title">Coming next</h2>
-          <p class="phase__lede">Phases 4–10 will be built in the next pass: pages needed, content per page, brand assets, audience &amp; photography, restaurant-specific sections (if applicable), contact &amp; location, technical &amp; access, timeline &amp; budget, and review.</p>
+          <p class="phase__kicker">
+            <span class="phase__kicker-label">Phase 04 / <span x-text="String(totalPhases).padStart(2, '0')"></span></span>
+          </p>
+          <h2 class="phase__title">Pages <em>you need</em></h2>
+          <p class="phase__lede">Pick every page your site should have. You can always add more later.</p>
         </div>
       </header>
+
+      <div class="fields">
+        <div class="field-group">
+          <h3 class="field-group__title">
+            <span class="field-group__number">1</span>
+            Choose your pages
+          </h3>
+
+          <div class="field">
+            <p class="field__hint">Tap each page you'd like included. Home is always there.</p>
+            <div class="page-grid">
+              <template x-for="page in visiblePages" :key="page.slug">
+                <button
+                  type="button"
+                  class="page-card"
+                  :class="{
+                    'page-card--selected': isPageSelected(page.slug),
+                    'page-card--locked': page.always
+                  }"
+                  @click="togglePage(page.slug, page.always)">
+                  <span class="page-card__check" aria-hidden="true">
+                    <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="3 8 7 12 13 4"></polyline>
+                    </svg>
+                  </span>
+                  <span class="page-card__label" x-text="page.label"></span>
+                  <span class="page-card__desc" x-text="page.description"></span>
+                </button>
+              </template>
+            </div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <h3 class="field-group__title">
+            <span class="field-group__number">2</span>
+            Anything custom?
+          </h3>
+
+          <div class="field">
+            <label class="field__label" for="customPages">Any other pages we haven't listed?</label>
+            <p class="field__hint">One per line. Describe what each page is for. Optional.</p>
+            <textarea id="customPages" class="field__input field__input--textarea" x-model="data.customPages" rows="3" placeholder="e.g. 'Wine list — dedicated page for our by-the-glass selection'"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <nav class="phase__nav">
+        <button class="btn btn--ghost" @click="goBack()">← Back</button>
+        <button class="btn btn--solid" @click="advance()" :disabled="!phase4Valid">
+          Continue <span class="btn__arrow">→</span>
+        </button>
+      </nav>
+    </section>
+
+    <!-- =========================================================
+         PHASE 5 · Page content
+         ========================================================= -->
+    <section class="phase" x-show="currentPhase === phaseNumbers.content" x-transition.opacity.duration.400ms>
+      <header class="phase__header">
+        <div class="phase__titleblock">
+          <p class="phase__kicker">
+            <span class="phase__kicker-label">Phase 05 / <span x-text="String(totalPhases).padStart(2, '0')"></span></span>
+          </p>
+          <h2 class="phase__title">Content <em>for each page</em></h2>
+          <p class="phase__lede">You have two options. Pick whichever fits how you like to work.</p>
+        </div>
+      </header>
+
+      <div class="fields">
+        <div class="field-group">
+          <h3 class="field-group__title">
+            <span class="field-group__number">1</span>
+            How do you want to handle copy?
+          </h3>
+
+          <div class="field">
+            <div class="choice-cards">
+              <button
+                type="button"
+                class="choice-card"
+                :class="{ 'choice-card--selected': data.copywritingPreference === 'wonder' }"
+                @click="data.copywritingPreference = 'wonder'">
+                <span class="choice-card__heading">We'll write it for you</span>
+                <span class="choice-card__desc">You give us bullet points of the facts and key things to cover. We handle the words.</span>
+                <span class="choice-card__tag">Recommended</span>
+              </button>
+              <button
+                type="button"
+                class="choice-card"
+                :class="{ 'choice-card--selected': data.copywritingPreference === 'client' }"
+                @click="data.copywritingPreference = 'client'">
+                <span class="choice-card__heading">I'll write my own copy</span>
+                <span class="choice-card__desc">You'll provide finished headings, sub-headings, and body copy for each page.</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="field-group" x-show="data.copywritingPreference" x-transition>
+          <h3 class="field-group__title">
+            <span class="field-group__number">2</span>
+            <span x-show="data.copywritingPreference === 'wonder'">What should each page cover?</span>
+            <span x-show="data.copywritingPreference === 'client'">Your page copy</span>
+          </h3>
+
+          <p class="field__hint" x-show="data.copywritingPreference === 'wonder'">
+            For each page below, give us bullet points of the facts, key points, and anything specific that must be included. Don't worry about wording — we'll shape it.
+          </p>
+          <p class="field__hint" x-show="data.copywritingPreference === 'client'">
+            For each page, provide your heading, sub-heading, and body copy. You can paste finished text here.
+          </p>
+
+          <template x-for="page in selectedPagesList" :key="page.slug">
+            <div class="page-content-card">
+              <h4 class="page-content-card__title" x-text="page.label"></h4>
+              <p class="page-content-card__hint" x-text="page.description"></p>
+              <textarea
+                class="field__input field__input--textarea"
+                rows="5"
+                :placeholder="data.copywritingPreference === 'wonder' ? 'e.g. • Founded 2019 by X\n• Focus on seasonal, British produce\n• Known for their Sunday roasts' : 'e.g. Heading: Welcome to...\nSub-heading: ...\nBody: ...'"
+                :value="data.pageContent[page.slug] || ''"
+                @input="data.pageContent[page.slug] = $event.target.value"></textarea>
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <nav class="phase__nav">
+        <button class="btn btn--ghost" @click="goBack()">← Back</button>
+        <button class="btn btn--solid" @click="advance()">
+          Continue <span class="btn__arrow">→</span>
+        </button>
+      </nav>
+    </section>
+
+    <!-- =========================================================
+         PHASE 6 · Brand & visuals
+         ========================================================= -->
+    <section class="phase" x-show="currentPhase === phaseNumbers.brand" x-transition.opacity.duration.400ms>
+      <header class="phase__header">
+        <div class="phase__titleblock">
+          <p class="phase__kicker">
+            <span class="phase__kicker-label">Phase 06 / <span x-text="String(totalPhases).padStart(2, '0')"></span></span>
+          </p>
+          <h2 class="phase__title">Brand &amp; <em>visuals</em></h2>
+          <p class="phase__lede">Colours, logo, fonts, guidelines — anything that defines how your brand looks.</p>
+        </div>
+      </header>
+
+      <div class="fields">
+        <div class="field-group">
+          <h3 class="field-group__title">
+            <span class="field-group__number">1</span>
+            Colours
+          </h3>
+
+          <div class="field-row">
+            <div class="field">
+              <label class="field__label" for="primaryColour">Primary colour</label>
+              <p class="field__hint">Your main brand colour. Hex code if you have it.</p>
+              <div class="colour-input">
+                <input type="color" class="colour-input__swatch" x-model="data.brand.primaryColour" />
+                <input type="text" id="primaryColour" class="field__input" x-model="data.brand.primaryColour" placeholder="#015b64" />
+              </div>
+            </div>
+            <div class="field">
+              <label class="field__label" for="accentColour">Accent colour</label>
+              <p class="field__hint">A secondary colour. Optional.</p>
+              <div class="colour-input">
+                <input type="color" class="colour-input__swatch" x-model="data.brand.accentColour" />
+                <input type="text" id="accentColour" class="field__input" x-model="data.brand.accentColour" placeholder="#b8a36e" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <h3 class="field-group__title">
+            <span class="field-group__number">2</span>
+            Logo
+          </h3>
+
+          <div class="field">
+            <label class="field__label">Upload or share a link</label>
+            <p class="field__hint">Ideally an SVG or PNG with transparent background. A Google Drive / Dropbox link works too.</p>
+            <div class="upload-row">
+              <button type="button" class="btn btn--ghost upload-btn" @click="openUploadcareDialog('logo')">
+                <span x-show="!data.brand.logoUploaded">Upload file</span>
+                <span x-show="data.brand.logoUploaded">Replace uploaded file ✓</span>
+              </button>
+              <span class="upload-or">or</span>
+              <input type="text" class="field__input" x-model="data.brand.logoLink" placeholder="Paste a link…" />
+            </div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <h3 class="field-group__title">
+            <span class="field-group__number">3</span>
+            Fonts
+          </h3>
+
+          <div class="field">
+            <label class="field__label">Do you have brand fonts?</label>
+            <div class="pills">
+              <button type="button" class="pill" :class="{ 'pill--selected': data.brand.fontPreference === 'have' }" @click="data.brand.fontPreference = 'have'">Yes, we have brand fonts</button>
+              <button type="button" class="pill" :class="{ 'pill--selected': data.brand.fontPreference === 'need' }" @click="data.brand.fontPreference = 'need'">No — help us choose</button>
+              <button type="button" class="pill" :class="{ 'pill--selected': data.brand.fontPreference === 'open' }" @click="data.brand.fontPreference = 'open'">Open to recommendations</button>
+            </div>
+          </div>
+
+          <div class="field" x-show="data.brand.fontPreference === 'have'" x-transition>
+            <label class="field__label" for="fontDetails">Which fonts?</label>
+            <p class="field__hint">Names are fine. If you have font files or a link to Google Fonts, even better.</p>
+            <textarea id="fontDetails" class="field__input field__input--textarea" x-model="data.brand.fontDetails" rows="2" placeholder="e.g. Heading: Cormorant Garamond, Body: Inter"></textarea>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <h3 class="field-group__title">
+            <span class="field-group__number">4</span>
+            Brand guidelines
+          </h3>
+
+          <div class="field">
+            <label class="field__label">Brand guidelines document</label>
+            <p class="field__hint">If you have one. PDF ideal. Optional.</p>
+            <div class="upload-row">
+              <button type="button" class="btn btn--ghost upload-btn" @click="openUploadcareDialog('brandGuidelines')">
+                <span x-show="!data.brand.brandGuidelinesUploaded">Upload file</span>
+                <span x-show="data.brand.brandGuidelinesUploaded">Replace uploaded file ✓</span>
+              </button>
+              <span class="upload-or">or</span>
+              <input type="text" class="field__input" x-model="data.brand.brandGuidelinesLink" placeholder="Paste a link…" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <nav class="phase__nav">
+        <button class="btn btn--ghost" @click="goBack()">← Back</button>
+        <button class="btn btn--solid" @click="advance()">
+          Continue <span class="btn__arrow">→</span>
+        </button>
+      </nav>
+    </section>
+
+    <!-- =========================================================
+         PHASE 7 · Audience & photography
+         ========================================================= -->
+    <section class="phase" x-show="currentPhase === phaseNumbers.audience" x-transition.opacity.duration.400ms>
+      <header class="phase__header">
+        <div class="phase__titleblock">
+          <p class="phase__kicker">
+            <span class="phase__kicker-label">Phase 07 / <span x-text="String(totalPhases).padStart(2, '0')"></span></span>
+          </p>
+          <h2 class="phase__title">Audience &amp; <em>photography</em></h2>
+          <p class="phase__lede">Who your site is speaking to, and what imagery you have or need.</p>
+        </div>
+      </header>
+
+      <div class="fields">
+        <div class="field-group">
+          <h3 class="field-group__title">
+            <span class="field-group__number">1</span>
+            Who's your audience?
+          </h3>
+
+          <div class="field">
+            <label class="field__label" for="audienceDescription">In a few sentences, who is this site for?</label>
+            <p class="field__hint">Think about the person you most want to attract. What are they like? What do they care about?</p>
+            <textarea id="audienceDescription" class="field__input field__input--textarea" x-model="data.audience.description" rows="4" placeholder="e.g. Locals within 5 miles who appreciate good food, plus London weekenders looking for somewhere different…"></textarea>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label class="field__label" for="audienceAge">Age range</label>
+              <input type="text" id="audienceAge" class="field__input" x-model="data.audience.ageRange" placeholder="e.g. 30–55" />
+            </div>
+            <div class="field">
+              <label class="field__label" for="audienceLocation">Where they are</label>
+              <input type="text" id="audienceLocation" class="field__input" x-model="data.audience.location" placeholder="e.g. East Sussex & London" />
+            </div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <h3 class="field-group__title">
+            <span class="field-group__number">2</span>
+            Photography &amp; video
+          </h3>
+
+          <div class="field">
+            <label class="field__label">Where are you with imagery?</label>
+            <div class="pills">
+              <button type="button" class="pill" :class="{ 'pill--selected': data.photography.assetStatus === 'have' }" @click="data.photography.assetStatus = 'have'">We have finished photos</button>
+              <button type="button" class="pill" :class="{ 'pill--selected': data.photography.assetStatus === 'some' }" @click="data.photography.assetStatus = 'some'">Some, but need more</button>
+              <button type="button" class="pill" :class="{ 'pill--selected': data.photography.assetStatus === 'none' }" @click="data.photography.assetStatus = 'none'">We have nothing yet</button>
+            </div>
+          </div>
+
+          <div class="field" x-show="data.photography.assetStatus && data.photography.assetStatus !== 'none'" x-transition>
+            <label class="field__label">Share your photos</label>
+            <p class="field__hint">Upload directly or paste a Google Drive / Dropbox link.</p>
+            <div class="upload-row">
+              <button type="button" class="btn btn--ghost upload-btn" @click="openUploadcareDialog('photos')">
+                <span x-show="!data.photography.photosUploaded">Upload photos</span>
+                <span x-show="data.photography.photosUploaded">Photos uploaded ✓</span>
+              </button>
+              <span class="upload-or">or</span>
+              <input type="text" class="field__input" x-model="data.photography.assetsLink" placeholder="Paste a link…" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="field__label">Do you need a photoshoot?</label>
+            <div class="pills">
+              <button type="button" class="pill" :class="{ 'pill--selected': data.photography.shootNeeded === 'yes' }" @click="data.photography.shootNeeded = 'yes'">Yes, we need one</button>
+              <button type="button" class="pill" :class="{ 'pill--selected': data.photography.shootNeeded === 'no' }" @click="data.photography.shootNeeded = 'no'">No, we're sorted</button>
+              <button type="button" class="pill" :class="{ 'pill--selected': data.photography.shootNeeded === 'maybe' }" @click="data.photography.shootNeeded = 'maybe'">Maybe — let's discuss</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <nav class="phase__nav">
+        <button class="btn btn--ghost" @click="goBack()">← Back</button>
+        <button class="btn btn--solid" @click="advance()">
+          Continue <span class="btn__arrow">→</span>
+        </button>
+      </nav>
+    </section>
+
+    <!-- =========================================================
+         PHASE 8 · Restaurant details (restaurant only)
+         ========================================================= -->
+    <section class="phase" x-show="isRestaurant && currentPhase === phaseNumbers.restaurant" x-transition.opacity.duration.400ms>
+      <header class="phase__header">
+        <div class="phase__titleblock">
+          <p class="phase__kicker">
+            <span class="phase__kicker-label">Phase 08 / 10</span>
+          </p>
+          <h2 class="phase__title">Restaurant <em>details</em></h2>
+          <p class="phase__lede">The specifics of running the place — hours, menus, booking, private dining.</p>
+        </div>
+      </header>
+
+      <div class="fields">
+        <div class="field-group">
+          <h3 class="field-group__title">
+            <span class="field-group__number">1</span>
+            Opening hours
+          </h3>
+
+          <div class="field">
+            <p class="field__hint">Times in 24-hour format (e.g. 12:00–15:00). Toggle "Closed" for any day you're not open.</p>
+            <div class="hours-table">
+              <template x-for="day in daysOfWeek" :key="day.key">
+                <div class="hours-row" :class="{ 'hours-row--closed': data.restaurant.openingHours[day.key].closed }">
+                  <div class="hours-row__day" x-text="day.label"></div>
+                  <label class="hours-row__closed-toggle">
+                    <input type="checkbox" x-model="data.restaurant.openingHours[day.key].closed" />
+                    <span>Closed</span>
+                  </label>
+                  <input
+                    type="text"
+                    class="field__input hours-row__input"
+                    x-model="data.restaurant.openingHours[day.key].lunch"
+                    :disabled="data.restaurant.openingHours[day.key].closed"
+                    placeholder="Lunch (e.g. 12:00–15:00)" />
+                  <input
+                    type="text"
+                    class="field__input hours-row__input"
+                    x-model="data.restaurant.openingHours[day.key].dinner"
+                    :disabled="data.restaurant.openingHours[day.key].closed"
+                    placeholder="Dinner (e.g. 18:00–22:30)" />
+                  <input
+                    type="text"
+                    class="field__input hours-row__input hours-row__input--notes"
+                    x-model="data.restaurant.openingHours[day.key].notes"
+                    :disabled="data.restaurant.openingHours[day.key].closed"
+                    placeholder="Notes (optional)" />
+                </div>
+              </template>
+            </div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <h3 class="field-group__title">
+            <span class="field-group__number">2</span>
+            Menus
+          </h3>
+
+          <div class="field">
+            <label class="field__label">Current menu</label>
+            <p class="field__hint">Upload a PDF, or paste a link to your menu.</p>
+            <div class="upload-row">
+              <button type="button" class="btn btn--ghost upload-btn" @click="openUploadcareDialog('menu')">
+                <span x-show="!data.restaurant.menuUploaded">Upload menu</span>
+                <span x-show="data.restaurant.menuUploaded">Menu uploaded ✓</span>
+              </button>
+              <span class="upload-or">or</span>
+              <input type="text" class="field__input" x-model="data.restaurant.menuLink" placeholder="Paste a link…" />
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label class="field__label" for="menuChanges">How often do menus change?</label>
+              <input type="text" id="menuChanges" class="field__input" x-model="data.restaurant.menuChanges" placeholder="e.g. Seasonally, weekly, monthly" />
+            </div>
+            <div class="field">
+              <label class="field__label" for="menuContact">Who'll send us menu updates?</label>
+              <input type="text" id="menuContact" class="field__input" x-model="data.restaurant.menuContact" placeholder="Name or email" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="dietaryFilters">Dietary info to flag</label>
+            <p class="field__hint">e.g. how you mark vegan, gluten-free, allergens.</p>
+            <input type="text" id="dietaryFilters" class="field__input" x-model="data.restaurant.dietaryFilters" placeholder="e.g. (V), (VG), (GF) labels; full allergen list on request" />
+          </div>
+        </div>
+
+        <div class="field-group">
+          <h3 class="field-group__title">
+            <span class="field-group__number">3</span>
+            Booking &amp; reservations
+          </h3>
+
+          <div class="field">
+            <label class="field__label">Booking platform</label>
+            <div class="pills">
+              <template x-for="platform in bookingPlatforms" :key="platform.value">
+                <button
+                  type="button"
+                  class="pill"
+                  :class="{ 'pill--selected': data.restaurant.bookingPlatform === platform.value }"
+                  @click="data.restaurant.bookingPlatform = platform.value"
+                  x-text="platform.label">
+                </button>
+              </template>
+            </div>
+          </div>
+
+          <div class="field" x-show="data.restaurant.bookingPlatform && !['phone', 'none'].includes(data.restaurant.bookingPlatform)" x-transition>
+            <label class="field__label" for="bookingLink">Booking link</label>
+            <input type="text" id="bookingLink" class="field__input" x-model="data.restaurant.bookingLink" placeholder="https://…" />
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label class="field__label" for="walkInPolicy">Walk-in policy</label>
+              <input type="text" id="walkInPolicy" class="field__input" x-model="data.restaurant.walkInPolicy" placeholder="e.g. Walk-ins welcome; first come first served" />
+            </div>
+            <div class="field">
+              <label class="field__label" for="groupSizeLimit">Group size limit</label>
+              <input type="text" id="groupSizeLimit" class="field__input" x-model="data.restaurant.groupSizeLimit" placeholder="e.g. Up to 8 on main floor" />
+            </div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <h3 class="field-group__title">
+            <span class="field-group__number">4</span>
+            Private dining &amp; events
+          </h3>
+
+          <div class="field">
+            <label class="field__label">Do you host private events?</label>
+            <div class="pills">
+              <button type="button" class="pill" :class="{ 'pill--selected': data.restaurant.privateDining === 'yes' }" @click="data.restaurant.privateDining = 'yes'">Yes</button>
+              <button type="button" class="pill" :class="{ 'pill--selected': data.restaurant.privateDining === 'no' }" @click="data.restaurant.privateDining = 'no'">No</button>
+            </div>
+          </div>
+
+          <div x-show="data.restaurant.privateDining === 'yes'" x-transition class="fields-nested">
+            <div class="field">
+              <label class="field__label" for="pdCapacities">Capacities</label>
+              <p class="field__hint">How many people can each space hold?</p>
+              <input type="text" id="pdCapacities" class="field__input" x-model="data.restaurant.pdCapacities" placeholder="e.g. Main room: 40 seated, 60 standing. Snug: 12 seated." />
+            </div>
+            <div class="field">
+              <label class="field__label" for="pdPricing">Pricing &amp; minimum spend</label>
+              <textarea id="pdPricing" class="field__input field__input--textarea" x-model="data.restaurant.pdPricing" rows="3" placeholder="e.g. £60pp set menu. Minimum spend £1,500 for Friday/Saturday dinner."></textarea>
+            </div>
+            <div class="field">
+              <label class="field__label" for="pdEventTypes">Event types you host</label>
+              <input type="text" id="pdEventTypes" class="field__input" x-model="data.restaurant.pdEventTypes" placeholder="e.g. Birthdays, wakes, corporate lunches, wedding receptions" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <nav class="phase__nav">
+        <button class="btn btn--ghost" @click="goBack()">← Back</button>
+        <button class="btn btn--solid" @click="advance()">
+          Continue <span class="btn__arrow">→</span>
+        </button>
+      </nav>
+    </section>
+
+    <!-- =========================================================
+         PHASE 9 · Contact, tech, timeline
+         ========================================================= -->
+    <section class="phase" x-show="currentPhase === phaseNumbers.contact" x-transition.opacity.duration.400ms>
+      <header class="phase__header">
+        <div class="phase__titleblock">
+          <p class="phase__kicker">
+            <span class="phase__kicker-label">Phase <span x-text="String(phaseNumbers.contact).padStart(2, '0')"></span> / <span x-text="String(totalPhases).padStart(2, '0')"></span></span>
+          </p>
+          <h2 class="phase__title">Contact, tech &amp; <em>timeline</em></h2>
+          <p class="phase__lede">The practical stuff — how people find you, what's in place already, and when you need this live.</p>
+        </div>
+      </header>
+
+      <div class="fields">
+        <div class="field-group">
+          <h3 class="field-group__title">
+            <span class="field-group__number">1</span>
+            Location &amp; contact
+          </h3>
+
+          <div class="field">
+            <label class="field__label" for="address">Address</label>
+            <p class="field__hint">Your public address, as it should appear on the site.</p>
+            <textarea id="address" class="field__input field__input--textarea" x-model="data.location.address" rows="3" placeholder="Street, city, postcode"></textarea>
+          </div>
+
+          <div class="field">
+            <label class="field__label">Show a map on the site?</label>
+            <div class="pills">
+              <button type="button" class="pill" :class="{ 'pill--selected': data.location.showMap === 'yes' }" @click="data.location.showMap = 'yes'">Yes, include a map</button>
+              <button type="button" class="pill" :class="{ 'pill--selected': data.location.showMap === 'no' }" @click="data.location.showMap = 'no'">No map needed</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <h3 class="field-group__title">
+            <span class="field-group__number">2</span>
+            Social media
+          </h3>
+
+          <p class="field__hint">Handles or full URLs. Fill in only the ones you use.</p>
+
+          <div class="field-row">
+            <div class="field">
+              <label class="field__label" for="instagram">Instagram</label>
+              <input type="text" id="instagram" class="field__input" x-model="data.socials.instagram" placeholder="@yourhandle" />
+            </div>
+            <div class="field">
+              <label class="field__label" for="tiktok">TikTok</label>
+              <input type="text" id="tiktok" class="field__input" x-model="data.socials.tiktok" placeholder="@yourhandle" />
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label class="field__label" for="facebook">Facebook</label>
+              <input type="text" id="facebook" class="field__input" x-model="data.socials.facebook" placeholder="Page URL or name" />
+            </div>
+            <div class="field">
+              <label class="field__label" for="linkedin">LinkedIn</label>
+              <input type="text" id="linkedin" class="field__input" x-model="data.socials.linkedin" placeholder="Page URL" />
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label class="field__label" for="youtube">YouTube</label>
+              <input type="text" id="youtube" class="field__input" x-model="data.socials.youtube" placeholder="Channel URL" />
+            </div>
+            <div class="field">
+              <label class="field__label" for="socialOther">Other</label>
+              <input type="text" id="socialOther" class="field__input" x-model="data.socials.other" placeholder="e.g. Substack, Pinterest" />
+            </div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <h3 class="field-group__title">
+            <span class="field-group__number">3</span>
+            Press &amp; references
+          </h3>
+
+          <div class="field">
+            <label class="field__label" for="press">Press &amp; awards</label>
+            <p class="field__hint">Any coverage, awards, or recognition worth featuring. Optional.</p>
+            <textarea id="press" class="field__input field__input--textarea" x-model="data.press" rows="4" placeholder="e.g. Featured in Time Out, 2024. Michelin Bib Gourmand, 2023."></textarea>
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="referenceSites">Reference sites you love</label>
+            <p class="field__hint">Two or three URLs, and a line on what you like about each.</p>
+            <textarea id="referenceSites" class="field__input field__input--textarea" x-model="data.referenceSites" rows="5" placeholder="e.g.&#10;1. example.com — love the photography-led homepage&#10;2. another.com — clean typography, feels understated"></textarea>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <h3 class="field-group__title">
+            <span class="field-group__number">4</span>
+            Technical &amp; access
+          </h3>
+
+          <p class="field__hint">
+            <em>Note on credentials:</em> Please don't share any passwords here. Once the project kicks off, we'll arrange a secure way to hand over any logins we need.
+          </p>
+
+          <div class="field">
+            <label class="field__label">Do you own your domain?</label>
+            <div class="pills">
+              <button type="button" class="pill" :class="{ 'pill--selected': data.tech.domainOwned === 'yes' }" @click="data.tech.domainOwned = 'yes'">Yes</button>
+              <button type="button" class="pill" :class="{ 'pill--selected': data.tech.domainOwned === 'no' }" @click="data.tech.domainOwned = 'no'">No — we need one</button>
+              <button type="button" class="pill" :class="{ 'pill--selected': data.tech.domainOwned === 'unsure' }" @click="data.tech.domainOwned = 'unsure'">Not sure</button>
+            </div>
+          </div>
+
+          <div class="field" x-show="data.tech.domainOwned === 'yes'" x-transition>
+            <label class="field__label" for="domainProvider">Who's your domain with?</label>
+            <p class="field__hint">e.g. GoDaddy, 123-reg, Cloudflare, Google Domains.</p>
+            <input type="text" id="domainProvider" class="field__input" x-model="data.tech.domainProvider" placeholder="Provider name" />
+          </div>
+
+          <div class="field" x-show="data.tech.domainOwned === 'yes'" x-transition>
+            <label class="field__label">Do you have admin access to your domain provider?</label>
+            <div class="pills">
+              <button type="button" class="pill" :class="{ 'pill--selected': data.tech.hasAdminDomain === 'yes' }" @click="data.tech.hasAdminDomain = 'yes'">Yes</button>
+              <button type="button" class="pill" :class="{ 'pill--selected': data.tech.hasAdminDomain === 'no' }" @click="data.tech.hasAdminDomain = 'no'">No</button>
+              <button type="button" class="pill" :class="{ 'pill--selected': data.tech.hasAdminDomain === 'unsure' }" @click="data.tech.hasAdminDomain = 'unsure'">Not sure</button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="existingSiteUrl">Existing website?</label>
+            <p class="field__hint">If you have one. Leave blank if this is your first.</p>
+            <input type="text" id="existingSiteUrl" class="field__input" x-model="data.tech.existingSiteUrl" placeholder="https://…" />
+          </div>
+
+          <div class="field" x-show="data.tech.existingSiteUrl" x-transition>
+            <label class="field__label">Do you have admin access to your current website?</label>
+            <div class="pills">
+              <button type="button" class="pill" :class="{ 'pill--selected': data.tech.hasAdminWebsite === 'yes' }" @click="data.tech.hasAdminWebsite = 'yes'">Yes</button>
+              <button type="button" class="pill" :class="{ 'pill--selected': data.tech.hasAdminWebsite === 'no' }" @click="data.tech.hasAdminWebsite = 'no'">No</button>
+              <button type="button" class="pill" :class="{ 'pill--selected': data.tech.hasAdminWebsite === 'unsure' }" @click="data.tech.hasAdminWebsite = 'unsure'">Not sure</button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="emailHosting">Where's your email hosted?</label>
+            <p class="field__hint">e.g. Google Workspace, Microsoft 365, your domain provider. Optional.</p>
+            <input type="text" id="emailHosting" class="field__input" x-model="data.tech.emailHosting" placeholder="Provider" />
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="analytics">Analytics in place?</label>
+            <p class="field__hint">Google Analytics, Plausible, Fathom — anything you'd like us to continue using.</p>
+            <input type="text" id="analytics" class="field__input" x-model="data.tech.analytics" placeholder="Platform / none" />
+          </div>
+        </div>
+
+        <div class="field-group">
+          <h3 class="field-group__title">
+            <span class="field-group__number">5</span>
+            Timeline &amp; budget
+          </h3>
+
+          <div class="field">
+            <label class="field__label" for="launchDate">Target launch date</label>
+            <p class="field__hint">When would you ideally like to go live? A rough month is fine.</p>
+            <input type="text" id="launchDate" class="field__input" x-model="data.timeline.launchDate" placeholder="e.g. Mid-July, Q3 2026" />
+          </div>
+
+          <div class="field">
+            <label class="field__label">Budget range</label>
+            <div class="pills">
+              <template x-for="option in budgetOptions" :key="option.value">
+                <button
+                  type="button"
+                  class="pill"
+                  :class="{ 'pill--selected': data.timeline.budget === option.value }"
+                  @click="data.timeline.budget = option.value"
+                  x-text="option.label">
+                </button>
+              </template>
+            </div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <h3 class="field-group__title">
+            <span class="field-group__number">6</span>
+            Anything else
+          </h3>
+
+          <div class="field">
+            <label class="field__label" for="anythingElse">Anything we haven't asked about?</label>
+            <p class="field__hint">Goals, concerns, things you loved or hated about past web projects — anything at all.</p>
+            <textarea id="anythingElse" class="field__input field__input--textarea" x-model="data.anythingElse" rows="5"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <nav class="phase__nav">
+        <button class="btn btn--ghost" @click="goBack()">← Back</button>
+        <button class="btn btn--solid" @click="advance()">
+          Review your brief <span class="btn__arrow">→</span>
+        </button>
+      </nav>
+    </section>
+
+    <!-- =========================================================
+         PHASE 10 · Review & submit
+         ========================================================= -->
+    <section class="phase" x-show="currentPhase === phaseNumbers.review && !submitted" x-transition.opacity.duration.400ms>
+      <header class="phase__header">
+        <div class="phase__titleblock">
+          <p class="phase__kicker">
+            <span class="phase__kicker-label">Phase <span x-text="String(phaseNumbers.review).padStart(2, '0')"></span> / <span x-text="String(totalPhases).padStart(2, '0')"></span></span>
+          </p>
+          <h2 class="phase__title">Review &amp; <em>submit</em></h2>
+          <p class="phase__lede">A final look at everything you've given us. Edit anything that's not quite right, then send it over.</p>
+        </div>
+      </header>
+
+      <div class="fields">
+        <div class="review-summary">
+          <div class="review-item">
+            <span class="review-item__label">Business</span>
+            <span class="review-item__value" x-text="data.businessName || '—'"></span>
+            <button class="review-item__edit" @click="goToPhase(phaseNumbers.business)">Edit</button>
+          </div>
+          <div class="review-item">
+            <span class="review-item__label">Primary contact</span>
+            <span class="review-item__value" x-text="data.contactName + (data.contactEmail ? ' · ' + data.contactEmail : '')"></span>
+            <button class="review-item__edit" @click="goToPhase(phaseNumbers.about)">Edit</button>
+          </div>
+          <div class="review-item">
+            <span class="review-item__label">Industry</span>
+            <span class="review-item__value" x-text="industryOptions.find(o => o.value === data.industry)?.label || '—'"></span>
+            <button class="review-item__edit" @click="goToPhase(phaseNumbers.business)">Edit</button>
+          </div>
+          <div class="review-item">
+            <span class="review-item__label">Pages</span>
+            <span class="review-item__value" x-text="selectedPagesList.map(p => p.label).join(', ') || '—'"></span>
+            <button class="review-item__edit" @click="goToPhase(phaseNumbers.pages)">Edit</button>
+          </div>
+          <div class="review-item">
+            <span class="review-item__label">Copywriting</span>
+            <span class="review-item__value" x-text="data.copywritingPreference === 'client' ? 'Client provides copy' : (data.copywritingPreference === 'wonder' ? 'Wonder Agency writes' : '—')"></span>
+            <button class="review-item__edit" @click="goToPhase(phaseNumbers.content)">Edit</button>
+          </div>
+          <div class="review-item">
+            <span class="review-item__label">Timeline</span>
+            <span class="review-item__value" x-text="(data.timeline.launchDate || '—') + ' · ' + (budgetOptions.find(b => b.value === data.timeline.budget)?.label || 'Budget not set')"></span>
+            <button class="review-item__edit" @click="goToPhase(phaseNumbers.contact)">Edit</button>
+          </div>
+        </div>
+
+        <div class="submit-panel">
+          <h3 class="submit-panel__title">Ready when you are</h3>
+          <p class="submit-panel__lede">When you hit submit, your brief is sent to our team. We'll be in touch within 2 working days.</p>
+
+          <div class="submit-panel__actions">
+            <button
+              class="btn btn--ghost"
+              @click="copyBrief()"
+              :disabled="submitting">
+              <span x-show="!copyFeedback">Copy full brief</span>
+              <span x-show="copyFeedback" x-text="copyFeedback"></span>
+            </button>
+            <button
+              class="btn btn--solid btn--large"
+              @click="submitBrief()"
+              :disabled="submitting">
+              <span x-show="!submitting">Send to Wonder Agency <span class="btn__arrow">→</span></span>
+              <span x-show="submitting">Sending…</span>
+            </button>
+          </div>
+
+          <p class="submit-panel__error" x-show="submitError" x-text="submitError"></p>
+        </div>
+      </div>
+
       <nav class="phase__nav">
         <button class="btn btn--ghost" @click="goBack()">← Back</button>
       </nav>
+    </section>
+
+    <!-- =========================================================
+         Submitted confirmation
+         ========================================================= -->
+    <section class="phase phase--welcome" x-show="submitted" x-transition.opacity.duration.600ms>
+      <div class="welcome">
+        <img src="wonder-logo.png" alt="The Wonder Agency" class="welcome__logo" />
+        <p class="eyebrow">Thank you</p>
+        <h1 class="welcome__title">
+          Brief <em>received.</em>
+        </h1>
+        <div class="welcome__divider"></div>
+        <p class="welcome__lede">
+          Your project brief is with our team. We'll review everything you've shared and come back to you within two working days with next steps — timings, a proposal, and anything we need to clarify.
+        </p>
+        <p class="welcome__footnote">
+          Questions in the meantime? Drop us a line at hello@thewonderagency.co.uk.
+        </p>
+      </div>
     </section>
 
   </main>
