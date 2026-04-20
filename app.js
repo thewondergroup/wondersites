@@ -2,7 +2,7 @@
    Wonder Agency · Project intake — app logic
    ========================================================= */
 
-const STORAGE_KEY = 'wonder_intake_v4';
+const STORAGE_KEY = 'wonder_intake_v5';
 const SAVE_DEBOUNCE_MS = 400;
 
 /* -----------------------------------------------------------
@@ -55,7 +55,7 @@ function wonderIntake() {
 
       // Phase 4 — Pages needed
       pagesNeeded: ['home'], // home is always included
-      customPages: '',
+      customPages: [], // array of { id, label, description } — each becomes a content card in Phase 5
 
       // Phase 5 — Copywriting preference + per-page content
       copywritingPreference: '', // 'client' | 'wonder'
@@ -163,13 +163,19 @@ function wonderIntake() {
       { slug: 'home',        label: 'Home',                       always: true,  description: 'Your front door. Everyone lands here first.' },
       { slug: 'about',       label: 'About',                      description: 'Your story, your people, your values.' },
       { slug: 'menus',       label: 'Menus',                      restaurantOnly: true, description: 'Food and drink menus, clearly presented.' },
+      { slug: 'whats-on',    label: "What's On",                  restaurantOnly: true, description: 'Supper clubs, guest chefs, live music, weekly happenings.' },
+      { slug: 'signature',   label: 'Signature offering',         restaurantOnly: true, description: 'A dedicated page for your flagship dish or experience.' },
+      { slug: 'wine-list',   label: 'Wine list',                  restaurantOnly: true, description: 'Your wine-focused page.' },
+      { slug: 'private',     label: 'Private dining / events',    restaurantOnly: true, description: 'Bookable spaces for private events and parties.' },
+      { slug: 'booking',     label: 'Booking / reservations',     restaurantOnly: true, description: 'Reservation widget or booking flow.' },
+      { slug: 'press',       label: 'Press & reviews',            restaurantOnly: true, description: 'Coverage, awards, and recognition.' },
+      { slug: 'vouchers',    label: 'Gift vouchers',              restaurantOnly: true, description: 'Purchasable vouchers and gift cards.' },
+      { slug: 'careers',     label: 'Careers / join us',          restaurantOnly: true, description: 'Job listings and hiring information.' },
       { slug: 'gallery',     label: 'Gallery',                    description: 'Photography showcase of your space, work, or food.' },
       { slug: 'services',    label: 'Services / offerings',       description: 'What you do, in detail.' },
       { slug: 'shop',        label: 'Shop / products',            description: 'Online store with products and checkout.' },
       { slug: 'blog',        label: 'Blog / journal',             description: 'Articles, news, and longer-form content.' },
       { slug: 'contact',     label: 'Contact',                    description: 'How to get in touch, map, opening hours.' },
-      { slug: 'private',     label: 'Private dining / events',    restaurantOnly: true, description: 'Bookable spaces for private events and parties.' },
-      { slug: 'booking',     label: 'Booking / reservations',     restaurantOnly: true, description: 'Reservation widget or booking flow.' },
       { slug: 'faq',         label: 'FAQ',                        description: 'Common questions answered up front.' },
     ],
 
@@ -358,9 +364,10 @@ function wonderIntake() {
         case this.phaseNumbers.pages: {
           // Home is always pre-selected by default.
           // Empty = only Home (no user action taken)
-          // Complete = any selection beyond Home
+          // Complete = any selection beyond Home, OR any custom page added with a label
           const nonHomePages = d.pagesNeeded.filter(p => p !== 'home');
-          if (nonHomePages.length === 0) return 'empty';
+          const hasCustomWithLabel = d.customPages.some(cp => cp.label && cp.label.trim());
+          if (nonHomePages.length === 0 && !hasCustomWithLabel) return 'empty';
           return 'complete';
         }
 
@@ -542,9 +549,17 @@ function wonderIntake() {
       );
     },
 
-    // Pages selected by the user, in catalogue order
+    // Pages selected by the user, in catalogue order, including custom pages
     get selectedPagesList() {
-      return this.visiblePages.filter(p => this.data.pagesNeeded.includes(p.slug));
+      const catalogueSelected = this.visiblePages.filter(p => this.data.pagesNeeded.includes(p.slug));
+      // Custom pages stored separately — append with a 'custom' flag
+      const customSelected = this.data.customPages.map(cp => ({
+        slug: cp.id,
+        label: cp.label || 'Untitled custom page',
+        description: cp.description || 'Custom page.',
+        isCustom: true,
+      }));
+      return [...catalogueSelected, ...customSelected];
     },
 
     togglePage(slug, always) {
@@ -559,6 +574,21 @@ function wonderIntake() {
 
     isPageSelected(slug) {
       return this.data.pagesNeeded.includes(slug);
+    },
+
+    /* ---------- Custom pages management ---------- */
+    addCustomPage() {
+      // Each custom page gets a stable unique id for content-card mapping
+      const id = 'custom-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5);
+      this.data.customPages.push({ id, label: '', description: '' });
+    },
+
+    removeCustomPage(index) {
+      const removed = this.data.customPages[index];
+      if (removed && this.data.pageContent[removed.id]) {
+        delete this.data.pageContent[removed.id];
+      }
+      this.data.customPages.splice(index, 1);
     },
 
     /* ---------- Uploadcare helpers ---------- */
@@ -683,13 +713,12 @@ function wonderIntake() {
       // Pages
       lines.push('## Pages required');
       this.selectedPagesList.forEach(p => {
-        lines.push(`- ${p.label}`);
+        if (p.isCustom) {
+          lines.push(`- ${p.label} *(custom page)*${p.description ? ' — ' + p.description : ''}`);
+        } else {
+          lines.push(`- ${p.label}`);
+        }
       });
-      if (d.customPages) {
-        lines.push('');
-        lines.push('**Additional custom pages:**  ');
-        lines.push(d.customPages);
-      }
       lines.push('');
 
       // Content per page

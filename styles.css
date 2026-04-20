@@ -1152,6 +1152,62 @@ main, header, footer { position: relative; z-index: 1; }
   cursor: not-allowed;
 }
 
+/* --- Custom pages dynamic list ------------------------- */
+.custom-pages {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.custom-page-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding: 14px;
+  background: rgba(250, 247, 240, 0.04);
+  border: 1px solid var(--line-teal);
+  border-radius: var(--radius-sm);
+}
+
+.custom-page-row__fields {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 10px;
+  min-width: 0;
+}
+
+.custom-page-row__remove {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  color: rgba(250, 247, 240, 0.45);
+  transition: all 0.2s var(--ease-out);
+  flex-shrink: 0;
+}
+
+.custom-page-row__remove:hover {
+  background: rgba(217, 124, 62, 0.15);
+  color: var(--amber);
+}
+
+.add-page-btn {
+  align-self: flex-start;
+  padding: 11px 22px;
+  font-size: 11px;
+}
+
+.add-page-btn__icon {
+  font-family: var(--ff-serif);
+  font-size: 16px;
+  line-height: 1;
+  margin-right: 2px;
+  font-style: normal;
+}
+
 /* --- Info panel (informational callout) ---------------- */
 .info-panel {
   padding: 18px 24px;
@@ -1452,6 +1508,10 @@ main, header, footer { position: relative; z-index: 1; }
   .submit-panel__title { font-size: 24px; }
   .submit-panel__actions { flex-direction: column; }
   .submit-panel .btn { width: 100%; }
+
+  .custom-page-row__fields {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* --- Reduced motion ------------------------------------ */
