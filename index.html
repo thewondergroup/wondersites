@@ -523,87 +523,124 @@
         <div class="field-group">
           <h3 class="field-group__title">
             <span class="field-group__number">1</span>
-            Colours
+            Do you have a brand identity?
           </h3>
 
-          <div class="field-row">
-            <div class="field">
-              <label class="field__label" for="primaryColour">Primary colour</label>
-              <p class="field__hint">Your main brand colour. Hex code if you have it.</p>
-              <div class="colour-input">
-                <input type="color" class="colour-input__swatch" x-model="data.brand.primaryColour" />
-                <input type="text" id="primaryColour" class="field__input" x-model="data.brand.primaryColour" placeholder="#015b64" />
+          <div class="field">
+            <p class="field__hint">If you're just starting out and don't have any of this yet, that's fine — we'll build it with you.</p>
+            <div class="choice-cards">
+              <button
+                type="button"
+                class="choice-card"
+                :class="{ 'choice-card--selected': data.brand.status === 'have' }"
+                @click="data.brand.status = 'have'">
+                <span class="choice-card__heading">Yes, we have a brand</span>
+                <span class="choice-card__desc">We have colours, a logo, or guidelines in place.</span>
+              </button>
+              <button
+                type="button"
+                class="choice-card"
+                :class="{ 'choice-card--selected': data.brand.status === 'starting-fresh' }"
+                @click="data.brand.status = 'starting-fresh'">
+                <span class="choice-card__heading">No, we're starting fresh</span>
+                <span class="choice-card__desc">We don't have a brand identity yet. We'd like your help building one.</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="info-panel" x-show="data.brand.status === 'starting-fresh'" x-transition>
+            <p class="info-panel__text">
+              <strong>No problem.</strong> We'll work with you to develop a brand identity as part of the project. You can skip the rest of this section — we'll cover colours, logo, and fonts when we kick off the build.
+            </p>
+          </div>
+        </div>
+
+        <div x-show="data.brand.status === 'have'" x-transition>
+          <div class="field-group">
+            <h3 class="field-group__title">
+              <span class="field-group__number">2</span>
+              Colours
+            </h3>
+
+            <div class="field-row">
+              <div class="field">
+                <label class="field__label" for="primaryColour">Primary colour</label>
+                <p class="field__hint">Your main brand colour. Hex code if you have it.</p>
+                <div class="colour-input">
+                  <input type="color" class="colour-input__swatch" x-model="data.brand.primaryColour" />
+                  <input type="text" id="primaryColour" class="field__input" x-model="data.brand.primaryColour" placeholder="#015b64" />
+                </div>
+              </div>
+              <div class="field">
+                <label class="field__label" for="accentColour">Accent colour</label>
+                <p class="field__hint">A secondary colour. Optional.</p>
+                <div class="colour-input">
+                  <input type="color" class="colour-input__swatch" x-model="data.brand.accentColour" />
+                  <input type="text" id="accentColour" class="field__input" x-model="data.brand.accentColour" placeholder="#b8a36e" />
+                </div>
               </div>
             </div>
+          </div>
+
+          <div class="field-group">
+            <h3 class="field-group__title">
+              <span class="field-group__number">3</span>
+              Logo
+            </h3>
+
             <div class="field">
-              <label class="field__label" for="accentColour">Accent colour</label>
-              <p class="field__hint">A secondary colour. Optional.</p>
-              <div class="colour-input">
-                <input type="color" class="colour-input__swatch" x-model="data.brand.accentColour" />
-                <input type="text" id="accentColour" class="field__input" x-model="data.brand.accentColour" placeholder="#b8a36e" />
+              <label class="field__label">Upload or share a link</label>
+              <p class="field__hint">Ideally an SVG or PNG with transparent background. A Google Drive / Dropbox link works too.</p>
+              <div class="upload-row">
+                <button type="button" class="btn btn--ghost upload-btn" @click="openUploadcareDialog('logo')">
+                  <span x-show="!data.brand.logoUploaded">Upload file</span>
+                  <span x-show="data.brand.logoUploaded">Replace uploaded file ✓</span>
+                </button>
+                <span class="upload-or">or</span>
+                <input type="text" class="field__input" x-model="data.brand.logoLink" placeholder="Paste a link…" />
               </div>
             </div>
           </div>
-        </div>
 
-        <div class="field-group">
-          <h3 class="field-group__title">
-            <span class="field-group__number">2</span>
-            Logo
-          </h3>
+          <div class="field-group">
+            <h3 class="field-group__title">
+              <span class="field-group__number">4</span>
+              Fonts
+            </h3>
 
-          <div class="field">
-            <label class="field__label">Upload or share a link</label>
-            <p class="field__hint">Ideally an SVG or PNG with transparent background. A Google Drive / Dropbox link works too.</p>
-            <div class="upload-row">
-              <button type="button" class="btn btn--ghost upload-btn" @click="openUploadcareDialog('logo')">
-                <span x-show="!data.brand.logoUploaded">Upload file</span>
-                <span x-show="data.brand.logoUploaded">Replace uploaded file ✓</span>
-              </button>
-              <span class="upload-or">or</span>
-              <input type="text" class="field__input" x-model="data.brand.logoLink" placeholder="Paste a link…" />
+            <div class="field">
+              <label class="field__label">Do you have brand fonts?</label>
+              <div class="pills">
+                <button type="button" class="pill" :class="{ 'pill--selected': data.brand.fontPreference === 'have' }" @click="data.brand.fontPreference = 'have'">Yes, we have brand fonts</button>
+                <button type="button" class="pill" :class="{ 'pill--selected': data.brand.fontPreference === 'need' }" @click="data.brand.fontPreference = 'need'">No — help us choose</button>
+                <button type="button" class="pill" :class="{ 'pill--selected': data.brand.fontPreference === 'open' }" @click="data.brand.fontPreference = 'open'">Open to recommendations</button>
+              </div>
             </div>
-          </div>
-        </div>
 
-        <div class="field-group">
-          <h3 class="field-group__title">
-            <span class="field-group__number">3</span>
-            Fonts
-          </h3>
-
-          <div class="field">
-            <label class="field__label">Do you have brand fonts?</label>
-            <div class="pills">
-              <button type="button" class="pill" :class="{ 'pill--selected': data.brand.fontPreference === 'have' }" @click="data.brand.fontPreference = 'have'">Yes, we have brand fonts</button>
-              <button type="button" class="pill" :class="{ 'pill--selected': data.brand.fontPreference === 'need' }" @click="data.brand.fontPreference = 'need'">No — help us choose</button>
-              <button type="button" class="pill" :class="{ 'pill--selected': data.brand.fontPreference === 'open' }" @click="data.brand.fontPreference = 'open'">Open to recommendations</button>
+            <div class="field" x-show="data.brand.fontPreference === 'have'" x-transition>
+              <label class="field__label" for="fontDetails">Which fonts?</label>
+              <p class="field__hint">Names are fine. If you have font files or a link to Google Fonts, even better.</p>
+              <textarea id="fontDetails" class="field__input field__input--textarea" x-model="data.brand.fontDetails" rows="2" placeholder="e.g. Heading: Cormorant Garamond, Body: Inter"></textarea>
             </div>
           </div>
 
-          <div class="field" x-show="data.brand.fontPreference === 'have'" x-transition>
-            <label class="field__label" for="fontDetails">Which fonts?</label>
-            <p class="field__hint">Names are fine. If you have font files or a link to Google Fonts, even better.</p>
-            <textarea id="fontDetails" class="field__input field__input--textarea" x-model="data.brand.fontDetails" rows="2" placeholder="e.g. Heading: Cormorant Garamond, Body: Inter"></textarea>
-          </div>
-        </div>
+          <div class="field-group">
+            <h3 class="field-group__title">
+              <span class="field-group__number">5</span>
+              Brand guidelines
+            </h3>
 
-        <div class="field-group">
-          <h3 class="field-group__title">
-            <span class="field-group__number">4</span>
-            Brand guidelines
-          </h3>
-
-          <div class="field">
-            <label class="field__label">Brand guidelines document</label>
-            <p class="field__hint">If you have one. PDF ideal. Optional.</p>
-            <div class="upload-row">
-              <button type="button" class="btn btn--ghost upload-btn" @click="openUploadcareDialog('brandGuidelines')">
-                <span x-show="!data.brand.brandGuidelinesUploaded">Upload file</span>
-                <span x-show="data.brand.brandGuidelinesUploaded">Replace uploaded file ✓</span>
-              </button>
-              <span class="upload-or">or</span>
-              <input type="text" class="field__input" x-model="data.brand.brandGuidelinesLink" placeholder="Paste a link…" />
+            <div class="field">
+              <label class="field__label">Brand guidelines document</label>
+              <p class="field__hint">If you have one. PDF ideal. Optional.</p>
+              <div class="upload-row">
+                <button type="button" class="btn btn--ghost upload-btn" @click="openUploadcareDialog('brandGuidelines')">
+                  <span x-show="!data.brand.brandGuidelinesUploaded">Upload file</span>
+                  <span x-show="data.brand.brandGuidelinesUploaded">Replace uploaded file ✓</span>
+                </button>
+                <span class="upload-or">or</span>
+                <input type="text" class="field__input" x-model="data.brand.brandGuidelinesLink" placeholder="Paste a link…" />
+              </div>
             </div>
           </div>
         </div>

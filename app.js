@@ -63,6 +63,7 @@ function wonderIntake() {
 
       // Phase 6 — Brand & visuals
       brand: {
+        status: '', // 'have' | 'starting-fresh' | ''
         primaryColour: '',
         accentColour: '',
         logoUploaded: '', // Uploadcare CDN URL
@@ -312,79 +313,136 @@ function wonderIntake() {
 
     /* ---------- Phase completion status ---------- */
     // Returns 'empty' | 'partial' | 'complete' for any phase number
+    // 'complete' = every required field filled. Optional fields don't count.
     phaseStatus(phaseNum) {
       const d = this.data;
 
       switch (phaseNum) {
         case this.phaseNumbers.about: {
-          const filled = [d.contactName, d.contactEmail, d.contactRole].filter(Boolean).length;
+          // Required: name, valid email, role
+          const reqs = [
+            !!d.contactName,
+            !!d.contactEmail && this.isValidEmail(d.contactEmail),
+            !!d.contactRole,
+          ];
+          const filled = reqs.filter(Boolean).length;
           if (filled === 0) return 'empty';
-          if (this.phase1Valid && d.contactRole) return 'complete';
+          if (filled === reqs.length) return 'complete';
           return 'partial';
         }
+
         case this.phaseNumbers.business: {
-          const filled = [d.businessName, d.industry, d.pitch, d.description, d.usps].filter(Boolean).length;
+          // Required: name, industry, pitch, description, USPs
+          // + industryOther if industry === 'other'
+          const reqs = [
+            !!d.businessName,
+            !!d.industry && (d.industry !== 'other' || !!d.industryOther),
+            !!d.pitch,
+            !!d.description,
+            !!d.usps,
+          ];
+          const filled = reqs.filter(Boolean).length;
           if (filled === 0) return 'empty';
-          if (this.phase2Valid && d.description && d.usps) return 'complete';
+          if (filled === reqs.length) return 'complete';
           return 'partial';
         }
+
         case this.phaseNumbers.tone: {
-          // tone always has default values, so look at brandFeeling as signal
+          // Sliders have defaults. Required: brand feeling keywords.
           if (d.brandFeeling) return 'complete';
+          // Touching voiceAvoid without brandFeeling = partial
           if (d.voiceAvoid) return 'partial';
           return 'empty';
         }
+
         case this.phaseNumbers.pages: {
-          if (d.pagesNeeded.length <= 1) return 'empty'; // just 'home'
-          if (d.pagesNeeded.length >= 3) return 'complete';
-          return 'partial';
+          // Home is always pre-selected. Any selection beyond that = complete.
+          // Just home alone still counts as valid ("landing page only" build).
+          if (d.pagesNeeded.length === 0) return 'empty';
+          return 'complete';
         }
+
         case this.phaseNumbers.content: {
+          // Required: copywriting preference chosen + content for every selected page
           if (!d.copywritingPreference) return 'empty';
-          const pagesWithContent = this.selectedPagesList.filter(p => (d.pageContent[p.slug] || '').trim()).length;
+          const selected = this.selectedPagesList;
+          if (selected.length === 0) return 'complete'; // edge case
+          const pagesWithContent = selected.filter(p => (d.pageContent[p.slug] || '').trim()).length;
           if (pagesWithContent === 0) return 'partial';
-          if (pagesWithContent >= this.selectedPagesList.length) return 'complete';
+          if (pagesWithContent === selected.length) return 'complete';
           return 'partial';
         }
+
         case this.phaseNumbers.brand: {
-          const filled = [
-            d.brand.primaryColour, d.brand.logoUploaded || d.brand.logoLink,
-            d.brand.fontPreference, d.brand.brandGuidelinesUploaded || d.brand.brandGuidelinesLink
-          ].filter(Boolean).length;
-          if (filled === 0) return 'empty';
-          if (filled >= 3) return 'complete';
+          // Two valid paths:
+          // (a) status = 'starting-fresh' → complete, no other fields needed
+          // (b) status = 'have' + primary colour + logo (upload OR link) + font preference
+          if (d.brand.status === 'starting-fresh') return 'complete';
+          if (d.brand.status !== 'have') {
+            // Nothing touched at all
+            const anyField = d.brand.primaryColour || d.brand.logoUploaded || d.brand.logoLink || d.brand.fontPreference;
+            return anyField ? 'partial' : 'empty';
+          }
+          // They picked 'have' — now check the required fields
+          const reqs = [
+            !!d.brand.primaryColour,
+            !!(d.brand.logoUploaded || d.brand.logoLink),
+            !!d.brand.fontPreference,
+          ];
+          const filled = reqs.filter(Boolean).length;
+          if (filled === reqs.length) return 'complete';
           return 'partial';
         }
+
         case this.phaseNumbers.audience: {
-          const hasAudience = d.audience.description || d.audience.ageRange || d.audience.location;
-          const hasPhoto = d.photography.assetStatus;
-          if (!hasAudience && !hasPhoto) return 'empty';
-          if (hasAudience && hasPhoto) return 'complete';
+          // Required: audience description + photo asset status (any of 3 values counts, including 'none')
+          const reqs = [
+            !!d.audience.description,
+            !!d.photography.assetStatus,
+          ];
+          const filled = reqs.filter(Boolean).length;
+          if (filled === 0) return 'empty';
+          if (filled === reqs.length) return 'complete';
           return 'partial';
         }
+
         case this.phaseNumbers.restaurant: {
           if (!this.isRestaurant) return 'empty';
+          // Required: hours set on at least one day, menu (upload OR link),
+          // booking platform, private dining answered
           const hasHours = Object.values(d.restaurant.openingHours).some(h => !h.closed && (h.lunch || h.dinner));
-          const hasMenu = d.restaurant.menuUploaded || d.restaurant.menuLink;
-          const hasBooking = d.restaurant.bookingPlatform;
-          const hasPrivate = d.restaurant.privateDining;
-          const count = [hasHours, hasMenu, hasBooking, hasPrivate].filter(Boolean).length;
-          if (count === 0) return 'empty';
-          if (count >= 3) return 'complete';
+          const reqs = [
+            hasHours,
+            !!(d.restaurant.menuUploaded || d.restaurant.menuLink),
+            !!d.restaurant.bookingPlatform,
+            !!d.restaurant.privateDining,
+          ];
+          const filled = reqs.filter(Boolean).length;
+          if (filled === 0) return 'empty';
+          if (filled === reqs.length) return 'complete';
           return 'partial';
         }
+
         case this.phaseNumbers.contact: {
-          const hasAddress = d.location.address;
-          const hasSocial = Object.values(d.socials).some(Boolean);
-          const hasTech = d.tech.domainOwned;
-          const count = [hasAddress, hasSocial, hasTech].filter(Boolean).length;
-          if (count === 0) return 'empty';
-          if (count >= 2) return 'complete';
+          // Required: address + domain ownership answered + existing-site question answered
+          // (existingSiteUrl can be blank — we treat "blank" as "no existing site" valid answer
+          //  but we need domain ownership explicitly selected)
+          const reqs = [
+            !!d.location.address,
+            !!d.tech.domainOwned,
+            // existingSite: "answered" means either a URL is given OR hasAdminWebsite question shown/skipped.
+            // Since URL is optional (they might not have a site), we only require domainOwned as the tech anchor.
+          ];
+          const filled = reqs.filter(Boolean).length;
+          if (filled === 0) return 'empty';
+          if (filled === reqs.length) return 'complete';
           return 'partial';
         }
+
         case this.phaseNumbers.review: {
-          return 'empty'; // Review screen itself has no fields
+          return 'empty'; // Review has no fields
         }
+
         default:
           return 'empty';
       }
@@ -642,17 +700,21 @@ function wonderIntake() {
 
       // Brand
       lines.push('## Brand & visuals');
-      if (d.brand.primaryColour) lines.push(`- **Primary colour:** ${d.brand.primaryColour}`);
-      if (d.brand.accentColour)  lines.push(`- **Accent colour:** ${d.brand.accentColour}`);
-      if (d.brand.logoUploaded)  lines.push(`- **Logo (uploaded):** ${d.brand.logoUploaded}`);
-      if (d.brand.logoLink)      lines.push(`- **Logo (link):** ${d.brand.logoLink}`);
-      if (d.brand.brandGuidelinesUploaded) lines.push(`- **Brand guidelines (uploaded):** ${d.brand.brandGuidelinesUploaded}`);
-      if (d.brand.brandGuidelinesLink)     lines.push(`- **Brand guidelines (link):** ${d.brand.brandGuidelinesLink}`);
-      if (d.brand.fontPreference) {
-        const fontLabels = { have: 'Has brand fonts', need: 'Needs help choosing', open: 'Open to recommendation' };
-        lines.push(`- **Fonts:** ${fontLabels[d.brand.fontPreference] || d.brand.fontPreference}`);
+      if (d.brand.status === 'starting-fresh') {
+        lines.push('_Client does not yet have a brand identity — to be developed as part of the project._');
+      } else {
+        if (d.brand.primaryColour) lines.push(`- **Primary colour:** ${d.brand.primaryColour}`);
+        if (d.brand.accentColour)  lines.push(`- **Accent colour:** ${d.brand.accentColour}`);
+        if (d.brand.logoUploaded)  lines.push(`- **Logo (uploaded):** ${d.brand.logoUploaded}`);
+        if (d.brand.logoLink)      lines.push(`- **Logo (link):** ${d.brand.logoLink}`);
+        if (d.brand.brandGuidelinesUploaded) lines.push(`- **Brand guidelines (uploaded):** ${d.brand.brandGuidelinesUploaded}`);
+        if (d.brand.brandGuidelinesLink)     lines.push(`- **Brand guidelines (link):** ${d.brand.brandGuidelinesLink}`);
+        if (d.brand.fontPreference) {
+          const fontLabels = { have: 'Has brand fonts', need: 'Needs help choosing', open: 'Open to recommendation' };
+          lines.push(`- **Fonts:** ${fontLabels[d.brand.fontPreference] || d.brand.fontPreference}`);
+        }
+        if (d.brand.fontDetails) lines.push(`- **Font details:** ${d.brand.fontDetails}`);
       }
-      if (d.brand.fontDetails) lines.push(`- **Font details:** ${d.brand.fontDetails}`);
       lines.push('');
 
       // Audience & photography

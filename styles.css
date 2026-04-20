@@ -1108,6 +1108,28 @@ main, header, footer { position: relative; z-index: 1; }
   cursor: not-allowed;
 }
 
+/* --- Info panel (informational callout) ---------------- */
+.info-panel {
+  padding: 18px 24px;
+  background: rgba(184, 163, 110, 0.1);
+  border-left: 2px solid var(--gold);
+  border-radius: var(--radius-sm);
+  margin-top: 4px;
+}
+
+.info-panel__text {
+  font-family: var(--ff-serif);
+  font-size: 16px;
+  color: var(--cream);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.info-panel__text strong {
+  color: var(--gold-bright);
+  font-weight: 600;
+}
+
 /* --- Nested fields ------------------------------------- */
 .fields-nested {
   display: flex;
