@@ -58,7 +58,46 @@
     </div>
   </header>
 
-  <main class="shell">
+  <div class="workspace">
+
+    <!-- Sidebar: section tracker -->
+    <aside class="sidebar" x-show="currentPhase > 0 && !submitted" :class="{ 'sidebar--open': sidebarMobileOpen }">
+      <button type="button" class="sidebar__mobile-toggle" @click="sidebarMobileOpen = !sidebarMobileOpen" aria-label="Toggle section tracker">
+        <span class="sidebar__mobile-toggle-label">
+          <span x-text="currentPhaseLabel"></span>
+        </span>
+        <svg class="sidebar__mobile-toggle-icon" :class="{ 'sidebar__mobile-toggle-icon--open': sidebarMobileOpen }" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="4 6 8 10 12 6"></polyline>
+        </svg>
+      </button>
+
+      <div class="sidebar__inner">
+        <p class="sidebar__title">Sections</p>
+        <nav class="sidebar__nav" aria-label="Form sections">
+          <template x-for="item in sidebarItems" :key="item.key">
+            <button
+              type="button"
+              class="sidebar-item"
+              :class="{
+                'sidebar-item--active': currentPhase === item.num,
+                'sidebar-item--complete': phaseStatus(item.num) === 'complete',
+                'sidebar-item--partial': phaseStatus(item.num) === 'partial'
+              }"
+              @click="goToPhase(item.num); sidebarMobileOpen = false">
+              <span class="sidebar-item__dot" aria-hidden="true">
+                <svg viewBox="0 0 12 12" width="8" height="8" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="2 6 5 9 10 3"></polyline>
+                </svg>
+              </span>
+              <span class="sidebar-item__num" x-text="String(item.num).padStart(2, '0')"></span>
+              <span class="sidebar-item__label" x-text="item.label"></span>
+            </button>
+          </template>
+        </nav>
+      </div>
+    </aside>
+
+    <main class="shell" :class="{ 'shell--with-sidebar': currentPhase > 0 && !submitted }">
 
     <!-- =========================================================
          PHASE 0 · Welcome
@@ -1104,7 +1143,8 @@
       </div>
     </section>
 
-  </main>
+    </main>
+  </div>
 
   <footer class="footcolumn" x-show="currentPhase > 0">
     <div class="footcolumn__inner">

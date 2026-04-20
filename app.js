@@ -310,6 +310,107 @@ function wonderIntake() {
       setTimeout(() => { this.saveIndicator = ''; }, 2000);
     },
 
+    /* ---------- Phase completion status ---------- */
+    // Returns 'empty' | 'partial' | 'complete' for any phase number
+    phaseStatus(phaseNum) {
+      const d = this.data;
+
+      switch (phaseNum) {
+        case this.phaseNumbers.about: {
+          const filled = [d.contactName, d.contactEmail, d.contactRole].filter(Boolean).length;
+          if (filled === 0) return 'empty';
+          if (this.phase1Valid && d.contactRole) return 'complete';
+          return 'partial';
+        }
+        case this.phaseNumbers.business: {
+          const filled = [d.businessName, d.industry, d.pitch, d.description, d.usps].filter(Boolean).length;
+          if (filled === 0) return 'empty';
+          if (this.phase2Valid && d.description && d.usps) return 'complete';
+          return 'partial';
+        }
+        case this.phaseNumbers.tone: {
+          // tone always has default values, so look at brandFeeling as signal
+          if (d.brandFeeling) return 'complete';
+          if (d.voiceAvoid) return 'partial';
+          return 'empty';
+        }
+        case this.phaseNumbers.pages: {
+          if (d.pagesNeeded.length <= 1) return 'empty'; // just 'home'
+          if (d.pagesNeeded.length >= 3) return 'complete';
+          return 'partial';
+        }
+        case this.phaseNumbers.content: {
+          if (!d.copywritingPreference) return 'empty';
+          const pagesWithContent = this.selectedPagesList.filter(p => (d.pageContent[p.slug] || '').trim()).length;
+          if (pagesWithContent === 0) return 'partial';
+          if (pagesWithContent >= this.selectedPagesList.length) return 'complete';
+          return 'partial';
+        }
+        case this.phaseNumbers.brand: {
+          const filled = [
+            d.brand.primaryColour, d.brand.logoUploaded || d.brand.logoLink,
+            d.brand.fontPreference, d.brand.brandGuidelinesUploaded || d.brand.brandGuidelinesLink
+          ].filter(Boolean).length;
+          if (filled === 0) return 'empty';
+          if (filled >= 3) return 'complete';
+          return 'partial';
+        }
+        case this.phaseNumbers.audience: {
+          const hasAudience = d.audience.description || d.audience.ageRange || d.audience.location;
+          const hasPhoto = d.photography.assetStatus;
+          if (!hasAudience && !hasPhoto) return 'empty';
+          if (hasAudience && hasPhoto) return 'complete';
+          return 'partial';
+        }
+        case this.phaseNumbers.restaurant: {
+          if (!this.isRestaurant) return 'empty';
+          const hasHours = Object.values(d.restaurant.openingHours).some(h => !h.closed && (h.lunch || h.dinner));
+          const hasMenu = d.restaurant.menuUploaded || d.restaurant.menuLink;
+          const hasBooking = d.restaurant.bookingPlatform;
+          const hasPrivate = d.restaurant.privateDining;
+          const count = [hasHours, hasMenu, hasBooking, hasPrivate].filter(Boolean).length;
+          if (count === 0) return 'empty';
+          if (count >= 3) return 'complete';
+          return 'partial';
+        }
+        case this.phaseNumbers.contact: {
+          const hasAddress = d.location.address;
+          const hasSocial = Object.values(d.socials).some(Boolean);
+          const hasTech = d.tech.domainOwned;
+          const count = [hasAddress, hasSocial, hasTech].filter(Boolean).length;
+          if (count === 0) return 'empty';
+          if (count >= 2) return 'complete';
+          return 'partial';
+        }
+        case this.phaseNumbers.review: {
+          return 'empty'; // Review screen itself has no fields
+        }
+        default:
+          return 'empty';
+      }
+    },
+
+    /* ---------- Sidebar navigation items ---------- */
+    get sidebarItems() {
+      const items = [
+        { num: this.phaseNumbers.about,    key: 'about',    label: 'About you' },
+        { num: this.phaseNumbers.business, key: 'business', label: 'Your business' },
+        { num: this.phaseNumbers.tone,     key: 'tone',     label: 'Tone & feel' },
+        { num: this.phaseNumbers.pages,    key: 'pages',    label: 'Pages needed' },
+        { num: this.phaseNumbers.content,  key: 'content',  label: 'Page content' },
+        { num: this.phaseNumbers.brand,    key: 'brand',    label: 'Brand & visuals' },
+        { num: this.phaseNumbers.audience, key: 'audience', label: 'Audience & photos' },
+      ];
+      if (this.isRestaurant) {
+        items.push({ num: this.phaseNumbers.restaurant, key: 'restaurant', label: 'Restaurant details' });
+      }
+      items.push({ num: this.phaseNumbers.contact, key: 'contact', label: 'Contact & tech' });
+      items.push({ num: this.phaseNumbers.review,  key: 'review',  label: 'Review & submit' });
+      return items;
+    },
+
+    sidebarMobileOpen: false,
+
     /* ---------- Navigation ---------- */
     advance() {
       this.currentPhase += 1;
