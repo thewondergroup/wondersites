@@ -2,7 +2,7 @@
    Wonder Agency · Project intake — app logic
    ========================================================= */
 
-const STORAGE_KEY = 'wonder_intake_v5';
+const STORAGE_KEY = 'wonder_intake_v6';
 const SAVE_DEBOUNCE_MS = 400;
 
 /* -----------------------------------------------------------
@@ -263,6 +263,14 @@ function wonderIntake() {
       if (this._pendingDraft) {
         this.data = this.deepMerge(this.data, this._pendingDraft.data);
         this.currentPhase = this._pendingDraft.currentPhase || 1;
+        // Defensive: ensure customPages is always an array (older draft versions stored it as string)
+        if (!Array.isArray(this.data.customPages)) {
+          this.data.customPages = [];
+        }
+        // Same for pagesNeeded
+        if (!Array.isArray(this.data.pagesNeeded)) {
+          this.data.pagesNeeded = ['home'];
+        }
       }
       this.dismissedResume = true;
       this.hasDraft = false;
@@ -366,7 +374,8 @@ function wonderIntake() {
           // Empty = only Home (no user action taken)
           // Complete = any selection beyond Home, OR any custom page added with a label
           const nonHomePages = d.pagesNeeded.filter(p => p !== 'home');
-          const hasCustomWithLabel = d.customPages.some(cp => cp.label && cp.label.trim());
+          const customList = Array.isArray(d.customPages) ? d.customPages : [];
+          const hasCustomWithLabel = customList.some(cp => cp.label && cp.label.trim());
           if (nonHomePages.length === 0 && !hasCustomWithLabel) return 'empty';
           return 'complete';
         }
@@ -553,7 +562,8 @@ function wonderIntake() {
     get selectedPagesList() {
       const catalogueSelected = this.visiblePages.filter(p => this.data.pagesNeeded.includes(p.slug));
       // Custom pages stored separately — append with a 'custom' flag
-      const customSelected = this.data.customPages.map(cp => ({
+      const customList = Array.isArray(this.data.customPages) ? this.data.customPages : [];
+      const customSelected = customList.map(cp => ({
         slug: cp.id,
         label: cp.label || 'Untitled custom page',
         description: cp.description || 'Custom page.',
@@ -578,12 +588,17 @@ function wonderIntake() {
 
     /* ---------- Custom pages management ---------- */
     addCustomPage() {
+      // Self-heal if stale data
+      if (!Array.isArray(this.data.customPages)) {
+        this.data.customPages = [];
+      }
       // Each custom page gets a stable unique id for content-card mapping
-      const id = 'custom-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5);
+      const id = 'custom-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7);
       this.data.customPages.push({ id, label: '', description: '' });
     },
 
     removeCustomPage(index) {
+      if (!Array.isArray(this.data.customPages)) return;
       const removed = this.data.customPages[index];
       if (removed && this.data.pageContent[removed.id]) {
         delete this.data.pageContent[removed.id];
