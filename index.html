@@ -644,15 +644,6 @@
               <input type="text" class="field__input" x-model="data.photography.assetsLink" placeholder="Paste a link…" />
             </div>
           </div>
-
-          <div class="field">
-            <label class="field__label">Do you need a photoshoot?</label>
-            <div class="pills">
-              <button type="button" class="pill" :class="{ 'pill--selected': data.photography.shootNeeded === 'yes' }" @click="data.photography.shootNeeded = 'yes'">Yes, we need one</button>
-              <button type="button" class="pill" :class="{ 'pill--selected': data.photography.shootNeeded === 'no' }" @click="data.photography.shootNeeded = 'no'">No, we're sorted</button>
-              <button type="button" class="pill" :class="{ 'pill--selected': data.photography.shootNeeded === 'maybe' }" @click="data.photography.shootNeeded = 'maybe'">Maybe — let's discuss</button>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -835,7 +826,7 @@
     </section>
 
     <!-- =========================================================
-         PHASE 9 · Contact, tech, timeline
+         PHASE 9 · Contact &amp; tech
          ========================================================= -->
     <section class="phase" x-show="currentPhase === phaseNumbers.contact" x-transition.opacity.duration.400ms>
       <header class="phase__header">
@@ -843,8 +834,8 @@
           <p class="phase__kicker">
             <span class="phase__kicker-label">Phase <span x-text="String(phaseNumbers.contact).padStart(2, '0')"></span> / <span x-text="String(totalPhases).padStart(2, '0')"></span></span>
           </p>
-          <h2 class="phase__title">Contact, tech &amp; <em>timeline</em></h2>
-          <p class="phase__lede">The practical stuff — how people find you, what's in place already, and when you need this live.</p>
+          <h2 class="phase__title">Contact &amp; <em>the technical bits</em></h2>
+          <p class="phase__lede">The practical stuff — how people find you, and what's already in place.</p>
         </div>
       </header>
 
@@ -996,34 +987,6 @@
         <div class="field-group">
           <h3 class="field-group__title">
             <span class="field-group__number">5</span>
-            Timeline &amp; budget
-          </h3>
-
-          <div class="field">
-            <label class="field__label" for="launchDate">Target launch date</label>
-            <p class="field__hint">When would you ideally like to go live? A rough month is fine.</p>
-            <input type="text" id="launchDate" class="field__input" x-model="data.timeline.launchDate" placeholder="e.g. Mid-July, Q3 2026" />
-          </div>
-
-          <div class="field">
-            <label class="field__label">Budget range</label>
-            <div class="pills">
-              <template x-for="option in budgetOptions" :key="option.value">
-                <button
-                  type="button"
-                  class="pill"
-                  :class="{ 'pill--selected': data.timeline.budget === option.value }"
-                  @click="data.timeline.budget = option.value"
-                  x-text="option.label">
-                </button>
-              </template>
-            </div>
-          </div>
-        </div>
-
-        <div class="field-group">
-          <h3 class="field-group__title">
-            <span class="field-group__number">6</span>
             Anything else
           </h3>
 
@@ -1085,8 +1048,8 @@
             <button class="review-item__edit" @click="goToPhase(phaseNumbers.content)">Edit</button>
           </div>
           <div class="review-item">
-            <span class="review-item__label">Timeline</span>
-            <span class="review-item__value" x-text="(data.timeline.launchDate || '—') + ' · ' + (budgetOptions.find(b => b.value === data.timeline.budget)?.label || 'Budget not set')"></span>
+            <span class="review-item__label">Domain</span>
+            <span class="review-item__value" x-text="data.tech.domainOwned === 'yes' ? ('Owned' + (data.tech.domainProvider ? ' · ' + data.tech.domainProvider : '')) : (data.tech.domainOwned === 'no' ? 'Needed' : '—')"></span>
             <button class="review-item__edit" @click="goToPhase(phaseNumbers.contact)">Edit</button>
           </div>
         </div>

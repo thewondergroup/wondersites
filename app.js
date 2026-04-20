@@ -83,7 +83,6 @@ function wonderIntake() {
         assetStatus: '', // 'have' | 'some' | 'none'
         assetsLink: '',
         photosUploaded: '',
-        shootNeeded: '', // 'yes' | 'no' | 'maybe'
       },
 
       // Phase 8 — Restaurant only
@@ -112,7 +111,7 @@ function wonderIntake() {
         pdEventTypes: '',
       },
 
-      // Phase 9 — Contact, socials, tech, timeline
+      // Phase 9 — Contact, socials, tech
       location: {
         address: '',
         showMap: 'yes', // 'yes' | 'no'
@@ -136,10 +135,6 @@ function wonderIntake() {
         emailHosting: '',
         platformPreference: '',
         analytics: '',
-      },
-      timeline: {
-        launchDate: '',
-        budget: '',
       },
       anythingElse: '',
     },
@@ -177,14 +172,6 @@ function wonderIntake() {
       { slug: 'faq',         label: 'FAQ',                        description: 'Common questions answered up front.' },
     ],
 
-    budgetOptions: [
-      { value: 'under-2k',   label: 'Under £2k' },
-      { value: '2-5k',       label: '£2k – £5k' },
-      { value: '5-10k',      label: '£5k – £10k' },
-      { value: 'over-10k',   label: '£10k+' },
-      { value: 'flexible',   label: 'Flexible / to be discussed' },
-    ],
-
     bookingPlatforms: [
       { value: 'opentable',   label: 'OpenTable' },
       { value: 'sevenrooms',  label: 'SevenRooms' },
@@ -218,7 +205,7 @@ function wonderIntake() {
         'Audience & photography',
       ];
       if (this.isRestaurant) labels.push('Restaurant details');
-      labels.push('Contact, tech & timeline');
+      labels.push('Contact & tech');
       labels.push('Review & submit');
       return labels;
     },
@@ -579,8 +566,6 @@ function wonderIntake() {
       if (d.photography.assetStatus) lines.push(`- **Status:** ${assetLabels[d.photography.assetStatus] || d.photography.assetStatus}`);
       if (d.photography.assetsLink) lines.push(`- **Assets link:** ${d.photography.assetsLink}`);
       if (d.photography.photosUploaded) lines.push(`- **Uploaded photos:** ${d.photography.photosUploaded}`);
-      const shootLabels = { yes: 'Shoot needed', no: 'No shoot required', maybe: 'Undecided' };
-      if (d.photography.shootNeeded) lines.push(`- **Shoot:** ${shootLabels[d.photography.shootNeeded] || d.photography.shootNeeded}`);
       lines.push('');
 
       // Restaurant
@@ -668,15 +653,6 @@ function wonderIntake() {
       if (d.tech.analytics)         lines.push(`- **Analytics:** ${d.tech.analytics}`);
       lines.push('');
       lines.push('_Credentials will be shared separately via secure channel once the project kicks off — not in this form._');
-      lines.push('');
-
-      // Timeline
-      lines.push('## Timeline & budget');
-      if (d.timeline.launchDate) lines.push(`- **Target launch:** ${d.timeline.launchDate}`);
-      if (d.timeline.budget) {
-        const budgetLabel = this.budgetOptions.find(b => b.value === d.timeline.budget)?.label || d.timeline.budget;
-        lines.push(`- **Budget:** ${budgetLabel}`);
-      }
       lines.push('');
 
       if (d.anythingElse) {
