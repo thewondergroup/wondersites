@@ -496,7 +496,12 @@ function wonderIntake() {
     /* ---------- Computed helpers ---------- */
     get progressPercent() {
       if (this.currentPhase === 0) return 0;
-      return Math.min(100, (this.currentPhase / this.totalPhases) * 100);
+      // Count phases that are actually complete, not just visited.
+      // Review phase is excluded from the denominator (it's a summary, no fields to complete).
+      const countable = this.sidebarItems.filter(item => item.key !== 'review');
+      if (countable.length === 0) return 0;
+      const completed = countable.filter(item => this.phaseStatus(item.num) === 'complete').length;
+      return Math.round((completed / countable.length) * 100);
     },
 
     get isRestaurant() {
